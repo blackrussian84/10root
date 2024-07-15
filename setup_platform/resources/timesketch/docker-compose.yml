@@ -1,0 +1,94 @@
+services:
+  timesketch-web:
+    container_name: timesketch-web
+    image: us-docker.pkg.dev/osdfir-registry/timesketch/timesketch:${TIMESKETCH_VERSION}
+    environment:
+      - NUM_WSGI_WORKERS=${NUM_WSGI_WORKERS}
+    restart: always
+    command: timesketch-web
+    volumes:
+      - ${TIMESKETCH_CONFIG_PATH}:/etc/timesketch/
+      - ${TIMESKETCH_UPLOAD_PATH}:/usr/share/timesketch/upload/
+      - ${TIMESKETCH_LOGS_PATH}:/var/log/timesketch/
+    networks:
+      - main_network
+
+  # Temporary service while the V2 UI is in the testing phase.
+  # TODO: Remove when V2 is the default.
+  timesketch-web-legacy:
+    container_name: timesketch-web-legacy
+    image: us-docker.pkg.dev/osdfir-registry/timesketch/timesketch:${TIMESKETCH_VERSION}
+    environment:
+      - NUM_WSGI_WORKERS=${NUM_WSGI_WORKERS}
+    restart: always
+    command: timesketch-web-legacy
+    volumes:
+      - ./etc/timesketch:/etc/timesketch/
+      - ./upload:/usr/share/timesketch/upload/
+      - ./logs:/var/log/timesketch/
+    ports:
+      - 9222:9200
+      - 5000:5000
+    networks:
+      - main_network
+
+  timesketch-worker:
+    container_name: timesketch-worker
+    image: us-docker.pkg.dev/osdfir-registry/timesketch/timesketch:${TIMESKETCH_VERSION}
+    environment:
+      - WORKER_LOG_LEVEL=${WORKER_LOG_LEVEL}
+    restart: always
+    command: timesketch-worker
+    volumes:
+      - ${TIMESKETCH_CONFIG_PATH}:/etc/timesketch/
+      - ${TIMESKETCH_UPLOAD_PATH}:/usr/share/timesketch/upload/
+      - ${TIMESKETCH_LOGS_PATH}:/var/log/timesketch/
+    networks:
+      - main_network
+
+  opensearch:
+    container_name: opensearch
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION}
+    restart: always
+    environment:
+      - TAKE_FILE_OWNERSHIP=1
+      - discovery.type=single-node
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true" # TODO: Enable when we have migrated the python client to Opensearch as well.
+      - "OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_MEM_USE_GB}g -Xmx${OPENSEARCH_MEM_USE_GB}g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ${OPENSEARCH_DATA_PATH}:/usr/share/opensearch/data/
+    networks:
+      - main_network
+
+  postgres:
+    container_name: postgres
+    image: postgres:${POSTGRES_VERSION}
+    environment:
+      - POSTGRES_USER=timesketch
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
+    volumes:
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  redis:
+    container_name: redis
+    image: redis:${REDIS_VERSION}
+    command: "redis-server"
+    restart: always
+    networks:
+      - main_network
+
+
+networks:
+  main_network:
+    external: true
