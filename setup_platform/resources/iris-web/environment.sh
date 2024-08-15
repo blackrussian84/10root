@@ -1,7 +1,7 @@
 DOCKERIZED=1
 #GUNICORN_CMD_ARGS="--spew"
 GUNICORN_CMD_ARGS="--log-level=DEBUG"
-SERVER_NAME=iris.app.dev
+SERVER_NAME=iriswebapp_app
 KEY_FILENAME=iris_dev_key.pem
 CERT_FILENAME=iris_dev_cert.pem
 
