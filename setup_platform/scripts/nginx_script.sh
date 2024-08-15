@@ -4,6 +4,6 @@ cd nginx
 
 cp -r $home_path/resources/nginx/.  .
 
-. .env
+source ./.env
 
 docker compose up -d

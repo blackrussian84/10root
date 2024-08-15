@@ -49,7 +49,7 @@ bash $home_path/scripts/iris-web_script.sh $home_path
 
 
 print_with_border "$nginx_msg"
-sh $home_path/scripts/nginx_script.sh $home_path
+bash $home_path/scripts/nginx_script.sh $home_path
 
 echo "setting up monitoring"
 bash $home_path/scripts/monitoring.sh
