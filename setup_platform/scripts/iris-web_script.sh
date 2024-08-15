@@ -21,7 +21,7 @@ cp $home_path/resources/iris-web/*start_with_secrets.sh .
 chmod a+rx,go-w *start_with_secrets.sh
 
 # Replaces direct `cp` for the situation of no secrets exists
-find $home_path/resources/iris-web -name 'env.*.secret' -type f | xargs cp
+find $home_path/resources/iris-web -name 'env.*.secret' -type f | xargs -I % cp % .
 
 generate_passwords_if_required .
 
