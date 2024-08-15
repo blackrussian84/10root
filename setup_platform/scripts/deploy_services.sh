@@ -8,6 +8,7 @@ portainer_msg="Portainer installation Message"
 strelka_msg="Strelka installation message"
 velociraptor_msg="Velociraptor installation message"
 nginx_msg="NGINX installation message"
+iris_msg="Iris installation message"
 
 home_path="/home/$username/setup_platform"
 function print_with_border() {
@@ -43,6 +44,10 @@ sh $home_path/scripts/velociraptor_script.sh $home_path
 print_with_border "$portainer_msg"
 sh $home_path/scripts/portainer_sript.sh $home_path
 
+print_with_border "$iris_msg"
+sh $home_path/scripts/iris-web_sript.sh $home_path
+
+
 print_with_border "$nginx_msg"
 sh $home_path/scripts/nginx_script.sh $home_path
 
@@ -55,3 +60,4 @@ echo "velociraptor : https://ip/velociraptor"
 echo "timesketch   : http://ip"
 echo "kibana       : http://ip/kibana"
 echo "strelka      : http://ip/strelka"
+echo "iris         : http://ip/iris"
