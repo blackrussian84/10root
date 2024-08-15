@@ -87,14 +87,14 @@ services:
       - iris_backend
 
   nginx:
-    container_name: iriswebapp_nginx
+    container_name: iriswebapp-nginx
     image: ghcr.io/dfir-iris/iriswebapp_nginx:v2.4.10
     env_file:
       - environment.sh
     networks:
       - main_network
     ports:
-      - "8443"
+      - 8443:8443
     volumes:
       - "./certificates/web_certificates/:/www/certs/:ro"
     restart: always
