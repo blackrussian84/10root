@@ -1,3 +1,4 @@
+#!/bin/bash
 # Reference: https://github.com/dfir-iris/iris-web/tree/master
 
 . ./_library.sh

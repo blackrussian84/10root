@@ -45,7 +45,7 @@ print_with_border "$portainer_msg"
 sh $home_path/scripts/portainer_sript.sh $home_path
 
 print_with_border "$iris_msg"
-sh $home_path/scripts/iris-web_script.sh $home_path
+bash $home_path/scripts/iris-web_script.sh $home_path
 
 
 print_with_border "$nginx_msg"
