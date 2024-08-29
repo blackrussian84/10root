@@ -5,7 +5,7 @@ echo -n "HTTP request for IRIS at ${URL}..."
 
 CODE=$(curl -ks -w '%{http_code}' -o /dev/null --url "${URL}")
 _ERR_=${?}
-IS_OK=$(bc -e "${CODE}>=200 && ${CODE}<=399 && ${_ERR_}==0")
+IS_OK=$(echo "${CODE}>=200 && ${CODE}<=399 && ${_ERR_}==0" | bc)
 
 if [[ "123${IS_OK}" = "1231" ]]
 then
