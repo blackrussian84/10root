@@ -5,7 +5,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 
 echo -e "${GREEN}+++ RUNNING A PRIMITIVE TEST SUITE +++${NC}"
-for t in $(find . -name '*_testcase.sh' -maxdepth 2 -type f);
+for t in $(find . -maxdepth 2 -type f -name '*_testcase.sh');
 do
   echo -n "Running ${t}: "
   {
