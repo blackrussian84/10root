@@ -54,7 +54,7 @@ bash $home_path/scripts/nginx_script.sh $home_path
 echo "setting up monitoring"
 bash $home_path/scripts/monitoring.sh
 
-echo "All the docker services are deployed successfuly, Access the services using below links"
+echo "All the docker services are deployed successfully, Access the services using below links"
 echo "Portainer    : https://ip/portainer"
 echo "velociraptor : https://ip/velociraptor"
 echo "timesketch   : http://ip"
