@@ -26,6 +26,15 @@ find $home_path/resources/iris-web -name 'env.*.secret' -type f | xargs -I % cp 
 # Replace direct `cp` for the cases with no testcases defined
 find $home_path/resources/iris-web -name '*_testcase.sh' -type f | xargs -I % cp % .
 
+# Read, would you like to generate passwords?
+# If yes, then define GENERATE_ALL_PASSWORDS=true
+read -p "Would you like to generate passwords? [Y/n] (default:no)" ANSWER
+if [[ $ANSWER =~ ^[Yy]$ ]]
+then
+  export GENERATE_ALL_PASSWORDS=true
+fi
+
+
 generate_passwords_if_required .
 
 docker compose build
