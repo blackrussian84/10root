@@ -53,7 +53,7 @@ services:
       - 9300:9300
     environment:
       node.name: elasticsearch
-      xpack.security.enabled: false
+      xpack.security.enabled: "false"
       xpack.license.self_generated.type: basic
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
@@ -102,14 +102,14 @@ services:
     ports:
       - 5601:5601
     environment:
-      xpack.security.enabled: false
-      xpack.spaces.enabled: false
+      xpack.security.enabled: "false"
+      xpack.spaces.enabled: "false"
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       SERVER_NAME: http://host.docker.internal/kibana
       SERVER_BASEPATH: /kibana
       SERVER_DEFAULTINDEX: artifact*
-      SERVER_SHOWINSECURECLUSTERWARNING: false
-      TELEMETRY_ENABLED: false
+      SERVER_SHOWINSECURECLUSTERWARNING: "false"
+      TELEMETRY_ENABLED: "false"
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
       - main_network
