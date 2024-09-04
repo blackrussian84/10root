@@ -1,7 +1,7 @@
 #!/bin/bash
 # Reference: https://github.com/dfir-iris/iris-web/tree/master
 
-. ./_library.sh
+. ./libs/passwords.sh
 
 home_path=$1
 if [ -d "iris-web" -a -d "iris-web/.git" ]

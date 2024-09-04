@@ -4,10 +4,13 @@ git clone https://github.com/target/strelka-ui.git
 cd strelka-ui/ui
 sed -i 's/"homepage": "\/"/"homepage": "\/strelka"/g' package.json
 if grep -q '"homepage": "/strelka"' package.json; then
-     echo "Update homepage successful"
- else
-     echo "Update homepage failed"
- fi
+   echo "Update homepage successful"
+else
+   echo "Update homepage failed"
+fi
+
+sed  -i "s|baseUrl: '/'|baseUrl: '/strelka'|" public/config.js
+
 cd ..
 docker compose build
 cd ..
