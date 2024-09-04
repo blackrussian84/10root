@@ -93,7 +93,8 @@ services:
 
   ui:
     image: strelka-ui-app
-    restart: unless-stopped  
+    restart: unless-stopped
+    container_name: strelka-ui
     environment:
       - DATABASE_HOST=postgresdb
       - DATABASE_NAME=strelka_ui

@@ -56,9 +56,11 @@ bash $home_path/scripts/monitoring.sh
 
 echo "All the docker services are deployed successfully, Access the services using below links"
 MYIP=$(curl -s ifconfig.me)
+# use host if it's defined in the .env, otherwise use MYIP
+
 echo "Portainer    : https://$MYIP/portainer"
-echo "iris         : http://$MYIP:8443/"
-echo "kibana       : http://$MYIP/kibana"
-echo "strelka      : http://$MYIP/strelka"
-echo "timesketch   : http://$MYIP"
+echo "iris         : https://$MYIP:8443/"
+echo "kibana       : https://$MYIP/kibana"
+echo "strelka      : https://$MYIP/strelka"
+echo "timesketch   : https://$MYIP"
 echo "velociraptor : https://$MYIP/velociraptor"
