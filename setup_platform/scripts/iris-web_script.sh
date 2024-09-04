@@ -34,8 +34,13 @@ then
   export GENERATE_ALL_PASSWORDS=true
 fi
 
-
 generate_passwords_if_required .
+# Show login credentials
+echo "############################################"
+echo "Login credentials:"
+echo "Username: administrator"
+echo "Password: $(cat env.IRIS_ADM_PASSWORD.secret)"
+echo "############################################"
 
 docker compose build
 docker compose up -d

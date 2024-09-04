@@ -55,7 +55,7 @@ echo "setting up monitoring"
 bash $home_path/scripts/monitoring.sh
 
 echo "All the docker services are deployed successfully, Access the services using below links"
-MYIP="$(curl -s ifconfig.me)"
+MYIP=$(curl -s ifconfig.me)
 echo "Portainer    : https://$MYIP/portainer"
 echo "iris         : http://$MYIP:8443/"
 echo "kibana       : http://$MYIP/kibana"
