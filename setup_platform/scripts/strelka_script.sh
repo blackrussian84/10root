@@ -11,7 +11,7 @@ if [ -z "$1" ]; then
 fi
 
 home_path=$1
-STRELKA_GIT_COMMIT=${STRELKA_GIT_COMMIT:-"0.24.07.09"}
+STRELKA_GIT_COMMIT=${STRELKA_GIT_COMMIT:-"5a5fc63a0d7505eb9db568e9344ad06d54800054"}
 STRELKA_UI_GIT_COMMIT=${STRELKA_UI_GIT_COMMIT:-"024610a88ddfec9f441cf7f52bc4a666536e60ad"}
 
 # Step 1: Clone the Strelka UI repository and check out the specific commit
