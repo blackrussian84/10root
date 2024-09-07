@@ -26,6 +26,7 @@ services:
       - elasticsearch
 
   elasticsearch:
+    container_name: elasticsearch
     build:
       context: elasticsearch/
       args:
@@ -53,6 +54,7 @@ services:
     restart: unless-stopped
 
   logstash:
+    container_name: logstash
     build:
       context: logstash/
       args:

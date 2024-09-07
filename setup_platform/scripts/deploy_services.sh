@@ -34,29 +34,29 @@ function print_with_border() {
 }
 
 print_with_border "$timesketch_msg"
-sh $home_path/scripts/timesketch_script.sh $home_path
+sh "${home_path}/scripts/timesketch_script.sh" "$home_path"
 
 print_with_border "$elk_msg"
-sh $home_path/scripts/kibana_script.sh $home_path
+sh "${home_path}/scripts/kibana_script.sh" "$home_path"
 
 print_with_border "$strelka_msg"
-sh $home_path/scripts/strelka_script.sh $home_path
+sh "${home_path}/scripts/strelka_script.sh" "$home_path"
 
 print_with_border "$velociraptor_msg"
-sh $home_path/scripts/velociraptor_script.sh $home_path
+sh "${home_path}/scripts/velociraptor_script.sh" "$home_path"
 
 print_with_border "$portainer_msg"
-sh $home_path/scripts/portainer_sript.sh $home_path
+sh "$"home_path"/scripts/portainer_sript.sh" "$home_path"
 
 print_with_border "$iris_msg"
-bash $home_path/scripts/iris-web_script.sh $home_path
-
-
-print_with_border "$nginx_msg"
-bash $home_path/scripts/nginx_script.sh $home_path
+bash "${home_path}/scripts/iris-web_script.sh" "$home_path"
 
 echo "setting up monitoring"
-bash $home_path/scripts/monitoring.sh
+bash "${home_path}/scripts/monitoring.sh"
+
+# Should be the last service to be deployed
+print_with_border "$nginx_msg"
+bash "${home_path}/scripts/nginx_script.sh" "$home_path"
 
 echo "All the docker services are deployed successfully, Access the services using below links"
 MYIP=$(curl -s ifconfig.me)
