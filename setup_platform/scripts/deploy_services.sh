@@ -62,8 +62,8 @@ echo "All the docker services are deployed successfully, Access the services usi
 MYIP=$(curl -s ifconfig.me)
 
 echo "Portainer    : https://$MYIP/portainer"
-echo "iris         : https://$MYIP:8443/"
+echo "iris         : https://$MYIP:8443"
 echo "kibana       : https://$MYIP/kibana"
-echo "strelka      : https://$MYIP/strelka"
+echo "strelka      : https://$MYIP:8843"
 echo "timesketch   : https://$MYIP/timesketch"
 echo "velociraptor : https://$MYIP/velociraptor"
