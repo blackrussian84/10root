@@ -1,14 +1,17 @@
 #!/bin/bash
 
-read -p "Enter username : " username
+#read -p "Enter username : " username
+current_user=$(whoami)
+read -p "Enter username for home directory setup (default: $current_user): " username
+username=${username:-$current_user}
 
-timesketch_msg="Time Sketch Installation"
 elk_msg="ELK installation Message"
+iris_msg="Iris installation message"
+nginx_msg="NGINX installation message"
 portainer_msg="Portainer installation Message"
 strelka_msg="Strelka installation message"
+timesketch_msg="Time Sketch Installation"
 velociraptor_msg="Velociraptor installation message"
-nginx_msg="NGINX installation message"
-iris_msg="Iris installation message"
 
 home_path="/home/$username/setup_platform"
 function print_with_border() {
