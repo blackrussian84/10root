@@ -9,6 +9,7 @@ else
    echo "Update homepage failed"
 fi
 
+# Try to fix the path
 sed  -i "s|baseUrl: '/'|baseUrl: '/strelka'|" public/config.js
 
 cd ..
