@@ -37,6 +37,7 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+    # TODO: Why do we need open ports on the host system here? We are using nginx which connected to this docker network, so we don't need it...
     environment:
       node.name: elasticsearch
       xpack.security.enabled: "false"
