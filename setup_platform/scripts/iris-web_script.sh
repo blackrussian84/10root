@@ -47,7 +47,7 @@ if [[ $ANSWER =~ ^[Yy]$ ]]; then
 
   # Show login credentials
   echo "############################################"
-  echo "Login credentials:"
+  echo "Iris credentials:"
   echo "Username: administrator"
   echo "Password: $(cat env.IRIS_ADM_PASSWORD.secret)"
   echo "############################################"
