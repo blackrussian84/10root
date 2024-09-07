@@ -47,7 +47,8 @@ cd ..
 printf "Cloning the Strelka repository and checking out commit %s...\n" "$STRELKA_GIT_COMMIT"
 if [ -d "strelka" -a -d "strelka/.git" ]; then
   cd strelka
-  git pull
+  git reset --hard
+  git pull origin "$STRELKA_GIT_COMMIT" --rebase
 else
   git clone https://github.com/target/strelka.git
   cd strelka
