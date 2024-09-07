@@ -19,7 +19,7 @@ mkdir -p "${CURR_DIR}/${SERVICE_NAME}"
 cd "${CURR_DIR}/${SERVICE_NAME}"
 
 printf "Copying the Strelka stack configs...\n"
-if [[ -d "configs" ]]; then
+if [ -d "configs" ]; then
   read -p "The $SERVICE_NAME configs already exists in the resources directory. Would you like to overwrite them? (y/n): " overwrite
   if [[ "$overwrite" == "y" ]]; then
     cp -Rf "$SRC_DIR/configs" .
