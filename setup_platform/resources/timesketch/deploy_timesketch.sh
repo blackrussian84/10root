@@ -84,8 +84,8 @@ home_path=$1
 
 # Docker compose and configuration
 echo -n "* Fetching configuration files.."
-mv $home_path/resources/timesketch/docker-compose.yml  timesketch/docker-compose.yml
-mv $home_path/resources/timesketch/config.env > timesketch/config.env
+mv docker-compose.yml  timesketch/docker-compose.yml
+mv config.env timesketch/config.env
 
 # Fetch default Timesketch config files
 curl -s $GITHUB_BASE_URL/data/timesketch.conf > timesketch/etc/timesketch/timesketch.conf
