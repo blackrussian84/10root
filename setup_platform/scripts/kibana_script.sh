@@ -12,7 +12,7 @@ if [ -z "$1" ]; then
 fi
 
 home_path=$1
-ELK_GIT_COMMIT=${ELK_GIT_COMMIT:-"629aea4"}
+ELK_GIT_COMMIT=${ELK_GIT_COMMIT:-"629aea49616ae8a4184b5e68da904cb88e69831d"}
 # Step 1: Clone only the specific commit "629aea4" from the repository
 printf "Cloning the repository and checking out commit %s...\n" "$ELK_GIT_COMMIT"
 git clone --branch main --single-branch --depth 1 https://github.com/deviantony/docker-elk.git

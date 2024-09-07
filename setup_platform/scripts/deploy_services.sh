@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 current_user=$(whoami)
 read -p "Enter username for home directory setup (default: $current_user): " username
 username=${username:-$current_user}
