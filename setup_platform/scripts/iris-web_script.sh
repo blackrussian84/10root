@@ -12,6 +12,7 @@ fi
 
 home_path=$1
 IRIS_GIT_COMMIT=${IRIS_GIT_COMMIT:-"v2.4.10"}
+SCRIPTS_PATH=${SCRIPTS_PATH:-"$(pwd)"}
 
 # Step 1: Clone the repository and check out the specific commit
 printf "Cloning the repository and checking out commit %s...\n" "$IRIS_GIT_COMMIT"
@@ -41,7 +42,7 @@ find "$home_path/resources/iris-web" -name '*_testcase.sh' -type f | xargs -I % 
 read -p "Would you like to generate passwords? [Y/n] (default:no)" ANSWER
 if [[ $ANSWER =~ ^[Yy]$ ]]; then
   export GENERATE_ALL_PASSWORDS=true
-  . ./libs/passwords.sh
+  . "${SCRIPTS_PATH}/libs/passwords.sh"
   generate_passwords_if_required .
 
   # Show login credentials
