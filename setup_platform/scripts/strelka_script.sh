@@ -18,7 +18,7 @@ STRELKA_UI_GIT_COMMIT=${STRELKA_UI_GIT_COMMIT:-"024610a88ddfec9f441cf7f52bc4a666
 printf "Cloning the Strelka UI repository and checking out commit %s...\n" "$STRELKA_UI_GIT_COMMIT"
 if [ -d "strelka-ui" -a -d "strelka-ui/.git" ]; then
   cd strelka-ui
-  git pull
+  git pull origin "$IRIS_GIT_COMMIT"
 else
   git clone https://github.com/target/strelka-ui.git
   cd strelka-ui
