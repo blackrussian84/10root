@@ -46,7 +46,7 @@ print_with_border "$velociraptor_msg"
 sh "${home_path}/scripts/velociraptor_script.sh" "$home_path"
 
 print_with_border "$portainer_msg"
-sh "$"home_path"/scripts/portainer_sript.sh" "$home_path"
+sh "${home_path}/scripts/portainer_sript.sh" "$home_path"
 
 print_with_border "$iris_msg"
 bash "${home_path}/scripts/iris-web_script.sh" "$home_path"
