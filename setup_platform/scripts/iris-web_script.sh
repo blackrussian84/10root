@@ -19,7 +19,7 @@ if [ -d "iris-web" -a -d "iris-web/.git" ]; then
   cd iris-web
   git pull
 else
-  git clone --branch master --single-branch --depth 1 https://github.com/dfir-iris/iris-web.git
+  git clone https://github.com/dfir-iris/iris-web.git
   cd iris-web
 fi
 git checkout "$IRIS_GIT_COMMIT"
