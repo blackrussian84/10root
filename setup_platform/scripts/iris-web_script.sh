@@ -28,7 +28,7 @@ git checkout "$IRIS_GIT_COMMIT"
 printf "Copying docker-compose.yml and environment.sh from %s...\n" "$home_path"
 cp "$home_path/resources/iris-web/docker-compose.yml" .
 cp "$home_path/resources/iris-web/environment.sh" .
-cp "$home_path/resources/iris-web/*start_with_secrets.sh" .
+cp "${home_path}"/resources/iris-web/*start_with_secrets.sh .
 chmod a+rx,go-w *start_with_secrets.sh
 
 # Replaces direct `cp` for the situation of no secrets exists
