@@ -56,6 +56,6 @@ fi
 # Step 4: Build and bring up the services
 printf "Building and bringing up the services...\n"
 docker compose build
-docker compose up -d
+docker compose up -d --force-recreate
 
 printf "IRIS deployment completed successfully.\n"
