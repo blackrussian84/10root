@@ -84,10 +84,8 @@ home_path=$1
 
 # Docker compose and configuration
 echo -n "* Fetching configuration files.."
-#curl -s $GITHUB_BASE_URL/docker/release/docker-compose.yml > timesketch/docker-compose.yml
-#chmod 755 docker-compose.yml
-cp $home_path/resources/timesketch/docker-compose.yml  timesketch/docker-compose.yml
-curl -s $GITHUB_BASE_URL/docker/release/config.env > timesketch/config.env
+mv $home_path/resources/timesketch/docker-compose.yml  timesketch/docker-compose.yml
+mv $home_path/resources/timesketch/config.env > timesketch/config.env
 
 # Fetch default Timesketch config files
 curl -s $GITHUB_BASE_URL/data/timesketch.conf > timesketch/etc/timesketch/timesketch.conf
@@ -105,7 +103,9 @@ curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv > timesketch/etc/timesketch/
 curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml > timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
 curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml > timesketch/etc/timesketch/plaso_formatters.yaml
 curl -s $GITHUB_BASE_URL/data/context_links.yaml > timesketch/etc/timesketch/context_links.yaml
-curl -s $GITHUB_BASE_URL/contrib/nginx.conf > timesketch/etc/nginx.conf
+
+# TODO: we don't use an nginx on this level
+#curl -s $GITHUB_BASE_URL/contrib/nginx.conf > timesketch/etc/nginx.conf
 echo "OK"
 
 # Create a minimal Timesketch config
