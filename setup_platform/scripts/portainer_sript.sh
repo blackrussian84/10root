@@ -19,6 +19,6 @@ cp "${home_path}/resources/portainer/docker-compose.yaml" .
 
 # Step 2: Use Docker Compose to bring up the services in detached mode
 printf "Bringing up the services in detached mode...\n"
-sudo docker compose up -d
+sudo docker compose up -d # TODO: Why do we need sudo here?
 
 printf "Portainer deployment completed successfully.\n"
