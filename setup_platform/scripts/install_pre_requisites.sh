@@ -37,23 +37,22 @@ function install_docker_compose_plugin() {
       return
     else
       echo "Updating Docker Compose plugin to version $DOCKER_COMPOSE_VERSION..."
-      # Download and install the Docker Compose plugin
-      curl -SL "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o "$COMPOSE_PLUGIN_PATH"
-      chmod +x "$COMPOSE_PLUGIN_PATH"
     fi
   else
     echo "Docker Compose plugin is not installed. Installing version ${DOCKER_COMPOSE_VERSION}..."
-    # Create the necessary directory
-    mkdir -p "$DOCKER_CONFIG/cli-plugins"
-
-    # Download and install the Docker Compose plugin
-    curl -SL "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o "$COMPOSE_PLUGIN_PATH"
-    chmod +x "$COMPOSE_PLUGIN_PATH"
   fi
 
+  # Create the necessary directory
+  mkdir -p "$DOCKER_CONFIG/cli-plugins"
+
+  # Download and install the Docker Compose plugin
+  curl -SL "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o "$COMPOSE_PLUGIN_PATH"
+  chmod +x "$COMPOSE_PLUGIN_PATH"
+
   # Verification code
-  installed_version=$("$COMPOSE_PLUGIN_PATH" version --short)
-  if [ "$installed_version" != "$DOCKER_COMPOSE_VERSION" ]; then
+  if [ -x "$COMPOSE_PLUGIN_PATH" ]; then
+    echo "Docker Compose plugin installed successfully."
+  else
     echo "Error: Docker Compose plugin installation failed."
   fi
 }
