@@ -24,5 +24,4 @@ cp "${SRC_DIR}/config.env" .
 cp "${SRC_DIR}/docker-compose.yml" .
 
 sudo chmod 755 deploy_timesketch.sh
-sudo ./deploy_.sh "$home_path"
-
+sudo ./deploy_timesketch.sh "$home_path"
