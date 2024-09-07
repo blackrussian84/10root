@@ -18,7 +18,7 @@ SCRIPTS_PATH=${SCRIPTS_PATH:-"$(pwd)"}
 printf "Cloning the repository and checking out commit %s...\n" "$IRIS_GIT_COMMIT"
 if [ -d "iris-web" -a -d "iris-web/.git" ]; then
   cd iris-web
-  git pull origin "$IRIS_GIT_COMMIT" --rebase
+  git pull origin "$IRIS_GIT_COMMIT"
 else
   git clone https://github.com/dfir-iris/iris-web.git
   cd iris-web
