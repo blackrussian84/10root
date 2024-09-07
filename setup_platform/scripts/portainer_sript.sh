@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 fi
 
 home_path=$1
-mkdir portainer
+mkdir -p portainer
 cd portainer
 
 # Step 1: Copy the docker-compose.yaml file from the specified home_path
