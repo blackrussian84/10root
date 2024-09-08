@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 function install_docker(){
     # Check if Docker is installed
     if ! command -v docker &> /dev/null; then

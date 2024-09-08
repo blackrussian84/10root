@@ -6,6 +6,7 @@ services:
     ports:
       - ${NGINX_HTTP_PORT}:80
       - ${NGINX_HTTPS_PORT}:443
+      - "8843:8843"
     volumes:
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./etc/ssl/certs:/etc/ssl/certs
