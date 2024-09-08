@@ -9,7 +9,7 @@ function install_docker(){
         
         # Install Docker using the appropriate package manager
         # For Ubuntu/Debian:
-        nx_script.shsudo apt-get update
+        sudo apt-get update
         sudo apt-get install -y docker.io
 
         # For other distributions, please consult Docker's installation guide.
