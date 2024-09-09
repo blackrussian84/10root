@@ -2,9 +2,13 @@
 
 set -eo pipefail
 
-current_user=$(whoami)
-read -p "Enter username for home directory setup (default: $current_user): " username
-username=${username:-$current_user}
+source "../resources/default.env"
+# If the username is not defined, then ask user to enter the username
+if [ -z "$username" ]; then
+    current_user=$(whoami)
+    read -p "Enter username for home directory setup (default: $current_user): " username
+    username=${username:-$current_user}
+fi
 
 elk_msg="ELK installation Message"
 iris_msg="Iris installation message"
