@@ -18,7 +18,7 @@ set -e
 START_CONTAINER=
 
 if [ "$1" == "--start-container" ]; then
-    START_CONTAINER=yes
+  START_CONTAINER=yes
 fi
 
 # Exit early if run as non-root user.
@@ -56,7 +56,7 @@ fi
 echo "* Setting vm.max_map_count for Elasticsearch"
 sysctl -q -w vm.max_map_count=262144
 if [ -z "$(grep vm.max_map_count /etc/sysctl.conf)" ]; then
-  echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+  echo "vm.max_map_count=262144" >>/etc/sysctl.conf
 fi
 
 # Create dirs
@@ -66,10 +66,16 @@ chown 1000 timesketch/data/opensearch
 
 echo -n "* Setting default config parameters.."
 POSTGRES_USER="timesketch"
-POSTGRES_PASSWORD="$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 32 ; echo)"
+POSTGRES_PASSWORD="$(
+  tr </dev/urandom -dc A-Za-z0-9 | head -c 32
+  echo
+)"
 POSTGRES_ADDRESS="postgres"
 POSTGRES_PORT=5432
-SECRET_KEY="$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 32 ; echo)"
+SECRET_KEY="$(
+  tr </dev/urandom -dc A-Za-z0-9 | head -c 32
+  echo
+)"
 OPENSEARCH_ADDRESS="opensearch"
 OPENSEARCH_PORT=9200
 OPENSEARCH_MEM_USE_GB=$(cat /proc/meminfo | grep MemTotal | awk '{printf "%.0f", ($2 / (1024 * 1024) / 2)}')
@@ -84,25 +90,25 @@ home_path=$1
 
 # Docker compose and configuration
 echo -n "* Fetching configuration files.."
-mv docker-compose.yml  timesketch/docker-compose.yml
+mv docker-compose.yml timesketch/docker-compose.yml
 mv config.env timesketch/config.env
 
 # Fetch default Timesketch config files
-curl -s $GITHUB_BASE_URL/data/timesketch.conf > timesketch/etc/timesketch/timesketch.conf
-curl -s $GITHUB_BASE_URL/data/tags.yaml > timesketch/etc/timesketch/tags.yaml
-curl -s $GITHUB_BASE_URL/data/plaso.mappings > timesketch/etc/timesketch/plaso.mappings
-curl -s $GITHUB_BASE_URL/data/generic.mappings > timesketch/etc/timesketch/generic.mappings
-curl -s $GITHUB_BASE_URL/data/regex_features.yaml > timesketch/etc/timesketch/regex_features.yaml
-curl -s $GITHUB_BASE_URL/data/winevt_features.yaml > timesketch/etc/timesketch/winevt_features.yaml
-curl -s $GITHUB_BASE_URL/data/ontology.yaml > timesketch/etc/timesketch/ontology.yaml
-curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv > timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/tags.yaml > timesketch/etc/timesketch/tags.yaml
-curl -s $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml > timesketch/etc/timesketch/intelligence_tag_metadata.yaml
-curl -s $GITHUB_BASE_URL/data/sigma_config.yaml > timesketch/etc/timesketch/sigma_config.yaml
-curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv > timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml > timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
-curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml > timesketch/etc/timesketch/plaso_formatters.yaml
-curl -s $GITHUB_BASE_URL/data/context_links.yaml > timesketch/etc/timesketch/context_links.yaml
+curl -s $GITHUB_BASE_URL/data/timesketch.conf >timesketch/etc/timesketch/timesketch.conf
+curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
+curl -s $GITHUB_BASE_URL/data/plaso.mappings >timesketch/etc/timesketch/plaso.mappings
+curl -s $GITHUB_BASE_URL/data/generic.mappings >timesketch/etc/timesketch/generic.mappings
+curl -s $GITHUB_BASE_URL/data/regex_features.yaml >timesketch/etc/timesketch/regex_features.yaml
+curl -s $GITHUB_BASE_URL/data/winevt_features.yaml >timesketch/etc/timesketch/winevt_features.yaml
+curl -s $GITHUB_BASE_URL/data/ontology.yaml >timesketch/etc/timesketch/ontology.yaml
+curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
+curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
+curl -s $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml >timesketch/etc/timesketch/intelligence_tag_metadata.yaml
+curl -s $GITHUB_BASE_URL/data/sigma_config.yaml >timesketch/etc/timesketch/sigma_config.yaml
+curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
+curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml >timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
+curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml >timesketch/etc/timesketch/plaso_formatters.yaml
+curl -s $GITHUB_BASE_URL/data/context_links.yaml >timesketch/etc/timesketch/context_links.yaml
 
 # TODO: we don't use an nginx on this level
 #curl -s $GITHUB_BASE_URL/contrib/nginx.conf > timesketch/etc/nginx.conf
@@ -133,13 +139,16 @@ ln -s ./config.env ./timesketch/.env
 echo "OK"
 echo "* Installation done."
 
+source ./timesketch/.env
 if [ -z $START_CONTAINER ]; then
   read -p "Would you like to start the containers? [Y/n] (default:no)" START_CONTAINER
 fi
 
-if [ "$START_CONTAINER" != "${START_CONTAINER#[Yy]}" ] ;then # this grammar (the #[] operator) means that the variable $start_cnt where any Y or y in 1st position will be dropped if they exist.
+if [ "$START_CONTAINER" != "${START_CONTAINER#[Yy]}" ]; then # this grammar (the #[] operator) means that the variable $start_cnt where any Y or y in 1st position will be dropped if they exist.
   cd timesketch
   docker compose up -d
+  echo "sleep 5..."
+  sleep 5
 else
   echo
   echo "You have chosen not to start the containers,"
@@ -158,17 +167,31 @@ else
   exit
 fi
 
-read -p "Would you like to create a new timesketch user? [Y/n] (default:no)" CREATE_USER
-sleep 5
-if [ "$CREATE_USER" != "${CREATE_USER#[Yy]}" ] ;then
-  read -p "Please provide a new username: " NEWUSERNAME
+# If CREATE_USER is not defined, then ask user to create a new user
+if [ -z "${CREATE_USER}" ]; then
+  read -p "Would you like to create a new timesketch user? [Y/n] (default:no)" CREATE_USER
+fi
 
-  #if [ ! -z "$NEWUSERNAME" ] ;then
-	sleep 10
-   # until [ "`docker inspect -f {{.State.Health.Status}} timesketch-web`"=="healthy" ]; do
-    #  sleep 1;
-    #done;
+# If $CREATE_USER = Yy, then ask user to enter the username
+if [ "$CREATE_USER" != "${CREATE_USER#[Yy]}" ]; then
+  if [ -z "${NEWUSERNAME}" ]; then
+    read -p "Please provide a new username: " NEWUSERNAME
+  fi
+  if [ -z "${NEWUSERNAME_PASSWORD}" ]; then
+    NEWUSERNAME_PASSWORD="$(
+      tr </dev/urandom -dc A-Za-z0-9 | head -c 32
+      echo
+    )"
+  fi
+  sleep 10
 
-    docker compose exec timesketch-web tsctl create-user "$NEWUSERNAME" && echo "user created"
-  #fi
+  docker compose exec timesketch-web tsctl create-user "$NEWUSERNAME" --password "${NEWUSERNAME_PASSWORD}" \
+  && echo "New user has been created"
+  echo "############################################"
+  echo "### User created: $NEWUSERNAME"
+  echo "### Password: $NEWUSERNAME_PASSWORD"
+  echo "############################################"
+  echo "### Autogenerated by scripts ###" >> ../../.env
+  echo "TIMESKETCH_USERNAME=$NEWUSERNAME" >>../../.env
+  echo "TIMESKETCH_PASSWORD=$NEWUSERNAME_PASSWORD" >> ../../.env
 fi

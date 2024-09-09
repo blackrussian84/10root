@@ -2,12 +2,14 @@
 
 set -eo pipefail
 
-source "../resources/default.env"
+cp ../resources/default.env .env
+source .env
+
 # If the username is not defined, then ask user to enter the username
 if [ -z "$username" ]; then
-    current_user=$(whoami)
-    read -p "Enter username for home directory setup (default: $current_user): " username
-    username=${username:-$current_user}
+  current_user=$(whoami)
+  read -p "Enter username for home directory setup (default: $current_user): " username
+  username=${username:-$current_user}
 fi
 
 elk_msg="ELK installation Message"
@@ -20,21 +22,21 @@ velociraptor_msg="Velociraptor installation message"
 
 home_path="/home/$username/setup_platform"
 function print_with_border() {
-    local input_string="$1"
-    local length=${#input_string}
-    local border="===================== "
-    # Calculate the length of the border
-    local border_length=$(( (80 - length - ${#border}) / 2 ))
-    # Print the top border
-    printf "%s" "$border"
-    for ((i=0; i<border_length; i++)); do
-        printf "="
-    done
-    printf " %s " "$input_string"
-    for ((i=0; i<border_length; i++)); do
-        printf "="
-    done
-    printf "%s\n" "$border"
+  local input_string="$1"
+  local length=${#input_string}
+  local border="===================== "
+  # Calculate the length of the border
+  local border_length=$(((80 - length - ${#border}) / 2))
+  # Print the top border
+  printf "%s" "$border"
+  for ((i = 0; i < border_length; i++)); do
+    printf "="
+  done
+  printf " %s " "$input_string"
+  for ((i = 0; i < border_length; i++)); do
+    printf "="
+  done
+  printf "%s\n" "$border"
 }
 
 print_with_border "$timesketch_msg"
