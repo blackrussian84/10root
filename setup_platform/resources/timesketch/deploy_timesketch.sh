@@ -172,7 +172,6 @@ if [ -z "${CREATE_USER}" ]; then
   read -p "Would you like to create a new timesketch user? [Y/n] (default:no)" CREATE_USER
 fi
 
-# If $CREATE_USER = Yy, then ask user to enter the username
 if [ "$CREATE_USER" != "${CREATE_USER#[Yy]}" ]; then
   if [ -z "${NEWUSERNAME}" ]; then
     read -p "Please provide a new username: " NEWUSERNAME
