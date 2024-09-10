@@ -36,6 +36,7 @@ function setup_shell() {
 function generate_passwords_if_required() {
     local workdir=$1
 
+    printf "Start generating passwords...\n"
     if [ "${GENERATE_PASSWORDS}234${GENERATE_ALL_PASSWORDS}" != 234 ]
     then
       declare -a required=($(_list_passwords_from_compose $workdir))
