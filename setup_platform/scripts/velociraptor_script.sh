@@ -4,11 +4,9 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+source "./libs/apps_helper.sh"
 # Check if home_path is provided
-if [ -z "$1" ]; then
-  printf "Usage: %s <home_path>\n" "$0"
-  exit 1
-fi
+check_home_path "$1"
 
 home_path=$1
 GLOBAL_ENV="${home_path}/scripts/.env"
@@ -18,33 +16,6 @@ SCRIPTS_DIR=$(pwd)
 SERVICE_NAME="velociraptor"
 SRC_DIR="$home_path/resources/$SERVICE_NAME"
 GIT_COMMIT=${GIT_COMMIT_VELOCIRAPTOR:-6da375b2ad9bb1f7ea2105967742a04bd485c9d8}
-
-# --- Function get env value from .env file
-# Inputs:
-# $1 - key to get the value
-# $2[optional] - env file path
-function get_env_value() {
-  local key=$1
-  local env_file=${2:-"${SCRIPTS_DIR}/${SERVICE_NAME}/.env"}
-  local value=$(grep "$key" "$env_file" | cut -d '=' -f2)
-  echo "$value"
-}
-
-# --- Replace the default values in the .env file which uses by docker-compose file
-# Inputs:
-# $1 - env file path to replace the values
-# $2 - key to replace
-function replace_env() {
-  local key=$1
-  local env_file=${2:-"${SCRIPTS_DIR}/${SERVICE_NAME}/.env"}
-
-  if [[ -v $key ]]; then
-    sed -i "s|${key}=.*|${key}=\"${!key}\"|" "$env_file"
-  else
-    echo "The env variable $key is not provided"
-  fi
-}
-
 
 printf "Preparing the %s:%s stack...\n" "$SERVICE_NAME" "$GIT_COMMIT"
 git clone https://github.com/weslambert/velociraptor-docker "$SERVICE_NAME"
