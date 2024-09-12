@@ -23,4 +23,3 @@ RUN chmod +x entrypoint && \
     apt-get clean
 WORKDIR /velociraptor 
 CMD ["/entrypoint"]
-

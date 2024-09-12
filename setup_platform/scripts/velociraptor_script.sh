@@ -24,6 +24,7 @@ cd "$SERVICE_NAME"
 git checkout "$GIT_COMMIT"
 cp "${SRC_DIR}/docker-compose.yaml" .
 cp "${SRC_DIR}/entrypoint" .
+cp "${SRC_DIR}/Dockerfile   " .
 cp "${SRC_DIR}/.env" .
 
 # Define here env variables to replace in the .env file
@@ -31,6 +32,8 @@ replace_env "VELOX_USER"
 replace_env "VELOX_PASSWORD"
 replace_env "VELOX_SERVER_URL"
 replace_env "VELOX_FRONTEND_HOSTNAME"
+replace_env "VELOX_USER_2"
+replace_env "VELOX_PASSWORD_2"
 
 sudo docker compose build
 sudo docker compose up -d
