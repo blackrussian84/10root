@@ -35,8 +35,8 @@ function get_env_value() {
 # $1 - env file path to replace the values
 # $2 - key to replace
 function replace_env() {
-  local env_file=$1
-  local key=$2
+  local key=$1
+  local env_file=${2:-"${SCRIPTS_DIR}/${SERVICE_NAME}/.env"}
 
   if [[ -v $key ]]; then
     sed -i "s|${key}=.*|${key}=\"${!key}\"|" "$env_file"
@@ -54,8 +54,11 @@ cp "${SRC_DIR}/docker-compose.yaml" .
 cp "${SRC_DIR}/entrypoint" .
 cp "${SRC_DIR}/.env" .
 
-replace_env ".env" "VELOX_USER"
-replace_env ".env" "VELOX_PASSWORD"
+# Define here env variables to replace in the .env file
+replace_env "VELOX_USER"
+replace_env "VELOX_PASSWORD"
+replace_env "VELOX_SERVER_URL"
+replace_env "VELOX_FRONTEND_HOSTNAME"
 
 sudo docker compose build
 sudo docker compose up -d
