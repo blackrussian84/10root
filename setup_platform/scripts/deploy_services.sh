@@ -58,8 +58,8 @@ print_with_border "$iris_msg"
 "${home_path}"/scripts/iris-web_script.sh "$home_path"
 
 # TODO:Do we really need this?
-echo "setting up monitoring"
-"${home_path}"/scripts/monitoring.sh
+#echo "setting up monitoring"
+#"${home_path}"/scripts/monitoring.sh
 
 # Should be the last service to be deployed
 print_with_border "$nginx_msg"
