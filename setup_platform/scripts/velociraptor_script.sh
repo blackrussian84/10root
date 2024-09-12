@@ -12,10 +12,11 @@ fi
 
 home_path=$1
 SERVICE_NAME="velociraptor"
+GLOBAL_ENV="${home_path}/scripts/.env"
+source "$GLOBAL_ENV"
 SRC_DIR="$home_path/resources/$SERVICE_NAME"
 SCRIPTS_DIR=$(pwd)
 GIT_COMMIT=${GIT_COMMIT_VELOCIRAPTOR:-6da375b2ad9bb1f7ea2105967742a04bd485c9d8}
-OVERWRITE_DEFAULT=${OVERWRITE_DEFAULT:-"yes"}
 
 # --- Function get env value from .env file
 # Inputs:
@@ -52,8 +53,6 @@ cp "${SRC_DIR}/docker-compose.yaml" .
 cp "${SRC_DIR}/entrypoint" .
 cp "${SRC_DIR}/.env" .
 
-GLOBAL_ENV="${home_path}/scripts/.env"
-source "$GLOBAL_ENV"
 replace_env ".env" "VELOX_USER"
 replace_env ".env" "VELOX_PASSWORD"
 
