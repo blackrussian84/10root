@@ -11,11 +11,12 @@ if [ -z "$1" ]; then
 fi
 
 home_path=$1
-SERVICE_NAME="velociraptor"
 GLOBAL_ENV="${home_path}/scripts/.env"
 source "$GLOBAL_ENV"
-SRC_DIR="$home_path/resources/$SERVICE_NAME"
 SCRIPTS_DIR=$(pwd)
+
+SERVICE_NAME="velociraptor"
+SRC_DIR="$home_path/resources/$SERVICE_NAME"
 GIT_COMMIT=${GIT_COMMIT_VELOCIRAPTOR:-6da375b2ad9bb1f7ea2105967742a04bd485c9d8}
 
 # --- Function get env value from .env file
