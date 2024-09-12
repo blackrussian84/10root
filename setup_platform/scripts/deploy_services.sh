@@ -55,7 +55,7 @@ print_with_border "$portainer_msg"
 "${home_path}"/scripts/portainer_sript.sh "$home_path"
 
 print_with_border "$iris_msg"
-"${home_path}"/scripts/iris-web_script.sh" "$home_path"
+"${home_path}"/scripts/iris-web_script.sh "$home_path"
 
 # TODO:Do we really need this?
 echo "setting up monitoring"
