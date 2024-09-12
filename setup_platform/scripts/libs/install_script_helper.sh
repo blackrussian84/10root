@@ -21,7 +21,7 @@ function check_home_path() {
 function get_env_value() {
   local key=$1
   local env_file=${2:-"${SCRIPTS_DIR}/${SERVICE_NAME}/.env"}
-  local value=$(grep "$key" "$env_file" | cut -d '=' -f2)
+  local value=$(sed -n "s/^${key}=//p" "$env_file")
   printf "%s\n" "$value"
 }
 
