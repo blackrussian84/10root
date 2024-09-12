@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# --- Reused functions in the app install scripts
+
 set -e
 
 # --- Function to Check if the first argument is provided
@@ -6,7 +9,7 @@ set -e
 function check_home_path() {
   local home_path=$1
   if [ -z "$home_path" ]; then
-    printf "Usage: %s <home_path>\n" "$0"
+    print_red "Usage: %s <home_path>\n" "$0"
     exit 1
   fi
 }
@@ -19,7 +22,7 @@ function get_env_value() {
   local key=$1
   local env_file=${2:-"${SCRIPTS_DIR}/${SERVICE_NAME}/.env"}
   local value=$(grep "$key" "$env_file" | cut -d '=' -f2)
-  echo "$value"
+  printf "%s\n" "$value"
 }
 
 # --- Replace the default values in the .env file which uses by docker-compose file
@@ -33,6 +36,6 @@ function replace_env() {
   if [[ -v $key ]]; then
     sed -i "s|${key}=.*|${key}=\"${!key}\"|" "$env_file"
   else
-    echo "The env variable $key is not provided"
+    print_yellow "The env variable $key is not provided"
   fi
 }
