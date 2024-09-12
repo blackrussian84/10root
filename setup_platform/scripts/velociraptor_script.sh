@@ -24,7 +24,7 @@ cd "$SERVICE_NAME"
 git checkout "$GIT_COMMIT"
 cp "${SRC_DIR}/docker-compose.yaml" .
 cp "${SRC_DIR}/entrypoint" .
-cp "${SRC_DIR}/Dockerfile   " .
+cp "${SRC_DIR}/Dockerfile" .
 cp "${SRC_DIR}/.env" .
 
 # Define here env variables to replace in the .env file
