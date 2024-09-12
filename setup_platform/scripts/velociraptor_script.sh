@@ -37,7 +37,7 @@ replace_env "VELOX_PASSWORD_2"
 
 sudo docker compose build
 sudo docker compose up -d
-print_yellow "Waiting for the $SERVICE_NAME service to start...\n"
+print_yellow "Waiting for the $SERVICE_NAME service to start..."
 sleep 5
 
 sudo chmod 777 -R "${SCRIPTS_DIR}/${SERVICE_NAME}/velociraptor"
@@ -45,7 +45,7 @@ sudo chmod 777 -R "${SCRIPTS_DIR}/${SERVICE_NAME}/velociraptor/clients"
 cd velociraptor
 cp -R "${SRC_DIR}/custom/" .
 sudo docker restart "${SERVICE_NAME}"
-print_green "Velociraptor deployment completed successfully.\n"
+print_green "Velociraptor deployment completed successfully."
 
 # --- Show login credentials
 _VELOX_USER=$(get_env_value 'VELOX_USER')
