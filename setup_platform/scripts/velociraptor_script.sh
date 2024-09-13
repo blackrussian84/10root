@@ -47,6 +47,7 @@ cd velociraptor
 # TODO: Should we use the entrypoint only or this way to copy custom folder?
 # https://github.com/10RootOrg/Risx-MSSP/blob/ca9659236cc93989bd00c4c499db9d278753a6e4/setup_platform/resources/velociraptor/entrypoint#L41
 cp -R "${SRC_DIR}/custom/" .
+print_yellow "Add custom resources and restarting the $SERVICE_NAME service..."
 sudo docker restart "${SERVICE_NAME}"
 print_green "Velociraptor deployment completed successfully."
 

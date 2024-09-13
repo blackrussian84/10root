@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./velociraptor:/velociraptor/:rw
+    env_file:
+      - .env
     environment:
       - VELOX_USER=${VELOX_USER}
       - VELOX_PASSWORD=${VELOX_PASSWORD}
