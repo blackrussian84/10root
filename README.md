@@ -37,3 +37,5 @@ TODO: Fix the `install_pre_requisites.sh` logic
 - Git ~ 2.34
 - [yq](https://github.com/mikefarah/yq/#install) ~ 4.44
 - bash shell ~ 5.0
+- unzip ~ 6.0
+- rsync ~ 3.2

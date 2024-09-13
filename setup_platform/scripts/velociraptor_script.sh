@@ -43,6 +43,8 @@ sudo docker compose up --detach --build
 print_yellow "Waiting for the $SERVICE_NAME service to start..."
 sleep 5
 
+# Update some settings
+# TODO: 777 permissions are not secure, should we use 755 instead?
 sudo chmod 777 -R "${SCRIPTS_DIR}/${SERVICE_NAME}/velociraptor"
 sudo chmod 777 -R "${SCRIPTS_DIR}/${SERVICE_NAME}/velociraptor/clients"
 cd velociraptor
@@ -51,6 +53,17 @@ cd velociraptor
 # https://github.com/10RootOrg/Risx-MSSP/blob/ca9659236cc93989bd00c4c499db9d278753a6e4/setup_platform/resources/velociraptor/entrypoint#L41
 cp -R "${SRC_DIR}/custom/" .
 print_yellow "Add custom resources and restarting the $SERVICE_NAME service..."
+
+# Add custom artifacts
+cd "${SCRIPTS_DIR}/${SERVICE_NAME}"
+download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
+unzip -o velociraptor_artifacts.zip -d server_artifacts
+# Sync the dir in the server_artifacts/<DIR>/* to the velociraptor/server_artifacts
+chmod -R 664 server_artifacts/*/*
+sudo chown -R root:root server_artifacts/*/*
+sudo rsync -rv server_artifacts/*/* velociraptor/server_artifacts
+
+# Finally restart the service
 sudo docker restart "${SERVICE_NAME}"
 print_green "Velociraptor deployment completed successfully."
 

@@ -39,3 +39,18 @@ function replace_env() {
     print_yellow "The env variable $key is not provided"
   fi
 }
+
+# --- Download external file
+# Inputs:
+# $1 - url to download
+# $2 - file name to save
+function download_external_file() {
+  local url=$1
+  local file_name=$2
+  if [ ! -f "$file_name" ]; then
+    print_green "Downloading $file_name..."
+    curl -s -L -o "$file_name" "$url"
+  else
+    print_red "$file_name already exists."
+  fi
+}
