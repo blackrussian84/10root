@@ -74,5 +74,5 @@ fi
 ./velociraptor config repack --exe clients/windows/velociraptor_client.exe client.config.yaml clients/windows/velociraptor_client_repacked.exe
 ./velociraptor config repack --msi clients/windows/velociraptor_client.msi client.config.yaml clients/windows/velociraptor_client_repacked.msi
 
-# Start Velocoraptor
+# Start Velociraptor
 ./velociraptor --config server.config.yaml frontend -v
