@@ -38,7 +38,9 @@ else
   mv /tmp/server.config.yaml /velociraptor/.
 fi
 
-cp -r custom $DATASTORE_LOCATION/artifact_definitions
+# TODO: Should we use the mounted custom artifacts or entrypoint artifacts?
+# https://github.com/10RootOrg/Risx-MSSP/blob/f0b69089ea09131a7522367322baa1bd66c70c4a/setup_platform/scripts/velociraptor_script.sh#L49
+cp -r /velociraptor/custom $DATASTORE_LOCATION/artifact_definitions
 
 # Re-generate client config in case server config changed
 ./velociraptor --config server.config.yaml config client > client.config.yaml
