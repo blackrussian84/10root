@@ -56,16 +56,21 @@ print_yellow "Add custom resources and restarting the $SERVICE_NAME service..."
 
 # Add custom artifacts
 cd "${SCRIPTS_DIR}/${SERVICE_NAME}"
-download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
-unzip -o velociraptor_artifacts.zip -d server_artifacts
-# Sync the dir in the server_artifacts/<DIR>/* to the velociraptor/server_artifacts
-chmod -R 664 server_artifacts/*/*
-sudo chown -R root:root server_artifacts/*/*
-sudo rsync -rv server_artifacts/*/* velociraptor/server_artifacts
+
+if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
+  download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
+  unzip -o velociraptor_artifacts.zip -d server_artifacts
+  # Sync the dir in the server_artifacts/<DIR>/* to the velociraptor/server_artifacts
+  chmod -R 664 server_artifacts/*/*
+  sudo chown -R root:root server_artifacts/*/*
+  sudo rsync -rv server_artifacts/*/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
+  #rm -rf server_artifacts
+fi
 
 # Finally restart the service
-sudo docker restart "${SERVICE_NAME}"
-print_green "Velociraptor deployment completed successfully."
+# TODO: why do we need sudo?
+sudo docker compose restart
+print_green "${SERVICE_NAME} deployment completed successfully."
 
 # --- Show login credentials
 _VELOX_USER=$(get_env_value 'VELOX_USER')
