@@ -68,7 +68,7 @@ fi
 
 # Finally restart the service
 # TODO: why do we need sudo?
-sudo docker compose restart
+docker compose restart
 print_green "${SERVICE_NAME} deployment completed successfully."
 
 # --- Show login credentials
