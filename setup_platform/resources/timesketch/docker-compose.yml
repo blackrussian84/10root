@@ -29,6 +29,9 @@ services:
       - ./etc/timesketch:/etc/timesketch/
       - ./upload:/usr/share/timesketch/upload/
       - ./logs:/var/log/timesketch/
+    ports:
+      - 9222:9200
+      - 5000:5000
     expose:
       - 9222:9200
       - 5000:5000
