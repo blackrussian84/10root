@@ -30,7 +30,6 @@ git checkout "$IRIS_GIT_COMMIT"
 printf "Copying docker-compose.yml and environment.sh from %s...\n" "$home_path"
 cp "$home_path"/resources/iris-web/*start_with_secrets.sh .
 cp "$home_path/resources/iris-web/docker-compose.yml" .
-cp "$home_path/resources/iris-web/enable_vt_module.sh" .
 cp "$home_path/resources/iris-web/environment.sh" .
 chmod a+rx,go-w *start_with_secrets.sh
 
@@ -67,15 +66,21 @@ docker compose build
 docker compose up -d --force-recreate
 
 # Step 5: Enable VT module if the IRIS_VT_MODULE_ENABLED is true
-if [[ "$IRIS_VT_MODULE_ENABLED" == "true" ]]; then
+if [[ "$IRIS_VT_MODULE_ENABLED" == "true" || $IRIS_MISP_MODULE_ENABLED == "true" ]]; then
   timeout=10
   printf "Enabling Iris modules\nWaiting %s s for the services to start...\n" "$timeout"
   sleep $timeout
 
-  source enable_vt_module.sh
-  check_if_exists
-  setup_api_key
-  enable_module
+  if [[ "$IRIS_VT_MODULE_ENABLED" == "true" ]]; then
+    printf "\n####\nEnabling VT module...\n####\n"
+    source "$home_path/resources/iris-web/enable_vt_module.sh"
+  fi
+
+  if [[ "$IRIS_MISP_MODULE_ENABLED" == "true" ]]; then
+    printf "\n####\nEnabling MISP module...\n####\n"
+    cp "$home_path/resources/iris-web/$IRIS_MISP_MODULE_CONFIG_FILE" .
+    source "$home_path/resources/iris-web/enable_misp_module.sh"
+  fi
 fi
 
 

@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
-# Enable VT module via SQL query and setup VT API key
+# Enable MISP module via SQL query and setup config
 # https://github.com/dfir-iris/iris-vt-module
 
 set -eo pipefail
 
 export DB_NAME=${IRIS_DB_NAME:-"iris_db"}
 export TABLE_NAME=${IRIS_TABLE_NAME:-"iris_module"}
-export MODULE_NAME=${IRIS_MODULE_NAME:-"iris_vt_module"}
-export VT_MODULE_API_KEY=${IRIS_VT_MODULE_API_KEY}
+export MODULE_NAME=${IRIS_MODULE_NAME:-"iris_misp_module"}
+export MODULE_CONFIG_FILE=${IRIS_MISP_MODULE_CONFIG_FILE:-"misp_config.json"}
+
 
 # Function to check if the module exists in the DB
 check_if_exists() {
@@ -24,41 +25,44 @@ check_if_exists() {
   fi
 }
 
-# Run command inside the DB container and make query to set API key and enable VT module
-function setup_api_key() {
-  printf "Setting up API key for the module %s\n" "$MODULE_NAME"
+# Run command inside the DB container and make query to update the module config
+function update_config() {
+  printf "Updating the config for the module %s\n" "$MODULE_NAME"
 
-  if [[ -z "$VT_MODULE_API_KEY" ]]; then
-    printf "VT API key is not defined\n"
+  # If file with config does not exist, exit
+  if [[ ! -f "$MODULE_CONFIG_FILE" ]]; then
+    printf "Config file %s does not exist\n" "$MODULE_CONFIG_FILE"
     exit 1
   fi
 
-  local QUERY=$(
+  MODULE_CONFIG_SETTINGS=$(jq -Rs . "$MODULE_CONFIG_FILE")
+
+  QUERY=$(
     cat <<EOF
       UPDATE $TABLE_NAME
       SET module_config = (
         SELECT jsonb_agg(
           CASE
-            WHEN elem->>'param_name' = 'vt_api_key'
-            THEN jsonb_set(elem, '{value}', '"$VT_MODULE_API_KEY"')
+            WHEN elem->>'param_name' = 'misp_config'
+            THEN jsonb_set(elem, '{value}', '$MODULE_CONFIG_SETTINGS'::jsonb)
             ELSE elem
           END
         )
         FROM jsonb_array_elements(module_config::jsonb) AS elem
       )
       WHERE EXISTS (
-        SELECT 1 FROM jsonb_array_elements(module_config::jsonb) AS elem WHERE elem->>'param_name' = 'vt_api_key'
+        SELECT 1 FROM jsonb_array_elements(module_config::jsonb) AS elem WHERE elem->>'param_name' = 'misp_config'
       );
 EOF
   )
 
   docker compose exec -T db psql -U postgres -d "$DB_NAME" -c "$QUERY"
-  printf "API key for the module %s has been set\n" "$MODULE_NAME"
+  printf "Config for the module %s has been updated\n" "$MODULE_NAME"
 
-#  Current API key to debug
+#  Show current value to debug
 #  CURR_CONFIG_JSON_QUERY="SELECT module_config FROM $TABLE_NAME WHERE module_name = '$MODULE_NAME';"
-#  RESP=$(docker compose exec -T db psql -U postgres -d "$DB_NAME" -q -t -c "$CURR_CONFIG_JSON_QUERY")
-#  jq '.[] | select(.param_name == "vt_api_key").value' <<<"$RESP"
+#  RESP="$(docker compose exec -T db psql -U postgres -d "$DB_NAME" -q -t -c "$CURR_CONFIG_JSON_QUERY")"
+#  jq '.[] | select(.param_name == "misp_config").value' <<<"$RESP" | jq -r .
 }
 
 # Function to enable the module
@@ -71,5 +75,5 @@ function enable_module() {
 }
 
 check_if_exists
-setup_api_key
+update_config
 enable_module
