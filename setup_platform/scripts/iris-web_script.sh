@@ -28,9 +28,10 @@ git checkout "$IRIS_GIT_COMMIT"
 
 # Step 2: Copy necessary files from the specified home_path
 printf "Copying docker-compose.yml and environment.sh from %s...\n" "$home_path"
+cp "$home_path"/resources/iris-web/*start_with_secrets.sh .
 cp "$home_path/resources/iris-web/docker-compose.yml" .
+cp "$home_path/resources/iris-web/enable_vt_module.sh" .
 cp "$home_path/resources/iris-web/environment.sh" .
-cp "${home_path}"/resources/iris-web/*start_with_secrets.sh .
 chmod a+rx,go-w *start_with_secrets.sh
 
 # Replaces direct `cp` for the situation of no secrets exists
@@ -64,5 +65,18 @@ fi
 printf "Building and bringing up the services...\n"
 docker compose build
 docker compose up -d --force-recreate
+
+# Step 5: Enable VT module if the IRIS_VT_MODULE_ENABLED is true
+if [[ "$IRIS_VT_MODULE_ENABLED" == "true" ]]; then
+  timeout=10
+  printf "Enabling Iris modules\nWaiting %s s for the services to start...\n" "$timeout"
+  sleep $timeout
+
+  source enable_vt_module.sh
+  check_if_exists
+  setup_api_key
+  enable_module
+fi
+
 
 printf "IRIS deployment completed successfully.\n"
