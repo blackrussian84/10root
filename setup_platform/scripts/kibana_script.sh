@@ -23,7 +23,7 @@ git checkout "$ELK_GIT_COMMIT"
 
 # Step 2: Copy the docker-compose.yml file from the specified home_path
 printf "Copying ELK files from %s...\n" "$home_path"
-cp -R "$home_path/resources/docker-elk/" .
+cp -Rf "$home_path/resources/docker-elk/*" .
 
 # Step 3: Use Docker Compose to bring up the setup service and then the rest of the services in detached mode
 printf "Bringing up the setup service...\n"
