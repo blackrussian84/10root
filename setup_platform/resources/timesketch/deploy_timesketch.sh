@@ -94,21 +94,23 @@ mv docker-compose.yml timesketch/docker-compose.yml
 mv config.env timesketch/config.env
 
 # Fetch default Timesketch config files
-curl -s $GITHUB_BASE_URL/data/timesketch.conf >timesketch/etc/timesketch/timesketch.conf
-curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
-curl -s $GITHUB_BASE_URL/data/plaso.mappings >timesketch/etc/timesketch/plaso.mappings
+curl -s $GITHUB_BASE_URL/data/context_links.yaml >timesketch/etc/timesketch/context_links.yaml
 curl -s $GITHUB_BASE_URL/data/generic.mappings >timesketch/etc/timesketch/generic.mappings
-curl -s $GITHUB_BASE_URL/data/regex_features.yaml >timesketch/etc/timesketch/regex_features.yaml
-curl -s $GITHUB_BASE_URL/data/winevt_features.yaml >timesketch/etc/timesketch/winevt_features.yaml
-curl -s $GITHUB_BASE_URL/data/ontology.yaml >timesketch/etc/timesketch/ontology.yaml
-curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
 curl -s $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml >timesketch/etc/timesketch/intelligence_tag_metadata.yaml
+curl -s $GITHUB_BASE_URL/data/ontology.yaml >timesketch/etc/timesketch/ontology.yaml
+curl -s $GITHUB_BASE_URL/data/plaso.mappings >timesketch/etc/timesketch/plaso.mappings
+curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml >timesketch/etc/timesketch/plaso_formatters.yaml
+curl -s $GITHUB_BASE_URL/data/regex_features.yaml >timesketch/etc/timesketch/regex_features.yaml
+curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml >timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
 curl -s $GITHUB_BASE_URL/data/sigma_config.yaml >timesketch/etc/timesketch/sigma_config.yaml
 curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml >timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
-curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml >timesketch/etc/timesketch/plaso_formatters.yaml
-curl -s $GITHUB_BASE_URL/data/context_links.yaml >timesketch/etc/timesketch/context_links.yaml
+curl -s $GITHUB_BASE_URL/data/timesketch.conf >timesketch/etc/timesketch/timesketch.conf
+curl -s $GITHUB_BASE_URL/data/winevt_features.yaml >timesketch/etc/timesketch/winevt_features.yaml
+
+# Replace the original tagger
+GITHUB_COMMIT_blueteam0ps=${GITHUB_COMMIT_blueteam0ps:-"07d4df90d8686b8379f97c5755dd9ebe5f534ca9"} # Default to the latest commit
+GITHUB_URL_blueteam0ps="https://raw.githubusercontent.com/blueteam0ps/AllthingsTimesketch/${GITHUB_COMMIT_blueteam0ps}"
+curl -o timesketch/etc/timesketch/tags.yaml -s "${GITHUB_URL_blueteam0ps}"/tags.yaml
 
 # TODO: we don't use an nginx on this level
 #curl -s $GITHUB_BASE_URL/contrib/nginx.conf > timesketch/etc/nginx.conf
