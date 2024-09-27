@@ -30,7 +30,23 @@ fi
 
 printf "Copying the docker compose file...\n"
 cp "$SRC_DIR/docker-compose.yml" .
-
 # NOTE: --force-recreate is used to ensure that the containers are recreated with the new configs
 docker compose up -d --force-recreate
+
+# Replace the original configs/python/backend/yara/*
+printf "Downloading the latest YARA rules from YARA Forge...\n"
+GITHUB_COMMIT_YARAHQ=${GITHUB_COMMIT_YARAHQ:-"20240922"} # Default to the latest commit
+GITHUB_URL_YARAHQ="https://github.com/YARAHQ/yara-forge/releases/download/${GITHUB_COMMIT_YARAHQ}/yara-forge-rules-full.zip"
+TMP_DIR=$(mktemp -d)
+curl -o "${TMP_DIR}"/yara-forge-rules-full.zip -Ls "${GITHUB_URL_YARAHQ}"
+unzip -o "${TMP_DIR}"/yara-forge-rules-full.zip -d "${TMP_DIR}"
+
+docker compose stop
+sudo rm -rf configs/python/backend/yara/*
+cp "${TMP_DIR}"/packages/full/yara-rules-full.yar configs/python/backend/yara/rules.yara
+docker compose up -d
+
+rm -rf "${TMP_DIR}"
+printf "YARA rules updated successfully.\n"
+
 printf "Strelka deployment completed successfully.\n"
