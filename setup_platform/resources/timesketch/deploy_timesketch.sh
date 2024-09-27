@@ -196,3 +196,9 @@ if [ "$CREATE_USER" != "${CREATE_USER#[Yy]}" ]; then
   echo "TIMESKETCH_USERNAME=$NEWUSERNAME" >> "$home_path/scripts/.env"
   echo "TIMESKETCH_PASSWORD=$NEWUSERNAME_PASSWORD" >> "$home_path/scripts/.env"
 fi
+
+echo "############################################"
+echo "Creating a username for importing data"
+echo "############################################"
+docker compose exec timesketch-web tsctl create-user "${IMPORT_USER_NAME}" --password "${IMPORT_USER_PASSWORD}" \
+&& echo "New user has been created"
