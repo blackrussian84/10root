@@ -202,3 +202,23 @@ echo "Creating a username for importing data"
 echo "############################################"
 docker compose exec timesketch-web tsctl create-user "${IMPORT_USER_NAME}" --password "${IMPORT_USER_PASSWORD}" \
 && echo "New user has been created"
+
+# TASK-8911: auto analyzers run
+CONFIG_FILE=timesketch/etc/timesketch/timesketch.conf
+ANALYZERS='["feature_extraction","sessionizer","geo_ip_maxmind_db","browser_search","domain","phishy_domains","sigma","hashr_lookup","evtx_gap","chain","ssh_sessionizer","ssh_bruteforce_sessionizer","web_activity_sessionizer","similarity_scorer","win_crash","browser_timeframe","safebrowsing","gcp_servicekey","gcp_logging","misp_analyzer","hashlookup_analyzer"]'
+
+# Update the AUTO_SKETCH_ANALYZERS line if it exists
+sudo sed -i "/^AUTO_SKETCH_ANALYZERS = / c\AUTO_SKETCH_ANALYZERS = $ANALYZERS" "$CONFIG_FILE"
+
+# Add the AUTO_SKETCH_ANALYZERS line if it does not exist
+if ! sudo grep -q '^AUTO_SKETCH_ANALYZERS = ' "$CONFIG_FILE"; then
+  echo "AUTO_SKETCH_ANALYZERS does not exist in the config file. Adding it."
+  echo "AUTO_SKETCH_ANALYZERS = $ANALYZERS" | sudo tee -a "$CONFIG_FILE"
+fi
+
+echo "############################################"
+echo "### Restarting the Timesketch container ###"
+docker compose restart timesketch-web
+docker compose restart timesketch-web-legacy
+docker compose restart timesketch-worker
+echo "############################################"
