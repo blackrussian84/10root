@@ -7,7 +7,7 @@ services:
     networks:
       - main_network
     expose:
-      - "7681:7681"
+      - "7681"
     command: ["ttyd", "-p", "7681", "bash"]
     restart: unless-stopped
 
