@@ -57,10 +57,14 @@ sh "${home_path}/scripts/portainer_sript.sh" "$home_path"
 print_with_border "$iris_msg"
 bash "${home_path}/scripts/iris-web_script.sh" "$home_path"
 
+echo "setting up nightingale"
+bash "${home_path}/scripts/nightingale_script.sh" "$home_path"
+
+# TODO: What is the purpose of the monitoring script?
 echo "setting up monitoring"
 bash "${home_path}/scripts/monitoring.sh"
 
-# Should be the last service to be deployed
+### Should be the last service to be deployed
 print_with_border "$nginx_msg"
 bash "${home_path}/scripts/nginx_script.sh" "$home_path"
 
