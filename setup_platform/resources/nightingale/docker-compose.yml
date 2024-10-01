@@ -1,0 +1,16 @@
+services:
+  app:
+    image: ghcr.io/rajanagori/nightingale:${image_tag:-stableXXX}
+    container_name: nightingale
+    env_file:
+      - .env
+    networks:
+      - main_network
+    expose:
+      - "7681:7681"
+    command: ["ttyd", "-p", "7681", "bash"]
+    restart: unless-stopped
+
+networks:
+  main_network:
+    external: true
