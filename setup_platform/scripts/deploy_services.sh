@@ -57,6 +57,9 @@ sh "${home_path}/scripts/portainer_sript.sh" "$home_path"
 print_with_border "$iris_msg"
 bash "${home_path}/scripts/iris-web_script.sh" "$home_path"
 
+print_with_border "Starting CyberChef. A web app for encryption, encoding, compression and data analysis tools."
+bash "${home_path}/scripts/cyberchef_script.sh" "$home_path"
+
 echo "setting up monitoring"
 bash "${home_path}/scripts/monitoring.sh"
 
@@ -68,6 +71,7 @@ echo "All the docker services are deployed successfully, Access the services usi
 MYIP=$(curl -s ifconfig.me)
 
 echo "Portainer    : https://$MYIP/portainer"
+echo "cyberchef    : https://$MYIP/cyberchef"
 echo "iris         : https://$MYIP:8443"
 echo "kibana       : https://$MYIP/kibana"
 echo "strelka      : https://$MYIP:8843"
