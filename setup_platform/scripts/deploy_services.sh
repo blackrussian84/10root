@@ -57,7 +57,10 @@ print_with_border "$portainer_msg"
 print_with_border "$iris_msg"
 "${home_path}"/scripts/iris-web_script.sh "$home_path"
 
-echo "setting up nightingale"
+print_with_border "Starting CyberChef. A web app for encryption, encoding, compression and data analysis tools."
+bash "${home_path}/scripts/cyberchef_script.sh" "$home_path"
+
+print_with_border "Setting up nightingale"
 bash "${home_path}/scripts/nightingale_script.sh" "$home_path"
 
 # TODO:Do we really need this?
@@ -72,6 +75,7 @@ echo "All the docker services are deployed successfully, Access the services usi
 MYIP=$(curl -s ifconfig.me)
 
 echo "Portainer    : https://$MYIP/portainer"
+echo "cyberchef    : https://$MYIP/cyberchef"
 echo "iris         : https://$MYIP:8443"
 echo "kibana       : https://$MYIP/kibana"
 echo "strelka      : https://$MYIP:8843"
