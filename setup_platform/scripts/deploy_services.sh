@@ -57,11 +57,14 @@ print_with_border "$portainer_msg"
 print_with_border "$iris_msg"
 "${home_path}"/scripts/iris-web_script.sh "$home_path"
 
+echo "setting up nightingale"
+bash "${home_path}/scripts/nightingale_script.sh" "$home_path"
+
 # TODO:Do we really need this?
 #echo "setting up monitoring"
 #"${home_path}"/scripts/monitoring.sh
 
-# Should be the last service to be deployed
+### Should be the last service to be deployed
 print_with_border "$nginx_msg"
 "${home_path}"/scripts/nginx_script.sh "$home_path"
 
@@ -74,3 +77,4 @@ echo "kibana       : https://$MYIP/kibana"
 echo "strelka      : https://$MYIP:8843"
 echo "timesketch   : https://$MYIP"
 echo "velociraptor : https://$MYIP/velociraptor"
+echo "nightingale  : https://$MYIP/nightingale"
