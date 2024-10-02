@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function _list_passwords_from_compose() {
     local workdir=$1
 

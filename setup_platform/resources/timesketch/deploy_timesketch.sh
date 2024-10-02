@@ -94,21 +94,23 @@ mv docker-compose.yml timesketch/docker-compose.yml
 mv config.env timesketch/config.env
 
 # Fetch default Timesketch config files
-curl -s $GITHUB_BASE_URL/data/timesketch.conf >timesketch/etc/timesketch/timesketch.conf
-curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
-curl -s $GITHUB_BASE_URL/data/plaso.mappings >timesketch/etc/timesketch/plaso.mappings
+curl -s $GITHUB_BASE_URL/data/context_links.yaml >timesketch/etc/timesketch/context_links.yaml
 curl -s $GITHUB_BASE_URL/data/generic.mappings >timesketch/etc/timesketch/generic.mappings
-curl -s $GITHUB_BASE_URL/data/regex_features.yaml >timesketch/etc/timesketch/regex_features.yaml
-curl -s $GITHUB_BASE_URL/data/winevt_features.yaml >timesketch/etc/timesketch/winevt_features.yaml
-curl -s $GITHUB_BASE_URL/data/ontology.yaml >timesketch/etc/timesketch/ontology.yaml
-curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/tags.yaml >timesketch/etc/timesketch/tags.yaml
 curl -s $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml >timesketch/etc/timesketch/intelligence_tag_metadata.yaml
+curl -s $GITHUB_BASE_URL/data/ontology.yaml >timesketch/etc/timesketch/ontology.yaml
+curl -s $GITHUB_BASE_URL/data/plaso.mappings >timesketch/etc/timesketch/plaso.mappings
+curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml >timesketch/etc/timesketch/plaso_formatters.yaml
+curl -s $GITHUB_BASE_URL/data/regex_features.yaml >timesketch/etc/timesketch/regex_features.yaml
+curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml >timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
 curl -s $GITHUB_BASE_URL/data/sigma_config.yaml >timesketch/etc/timesketch/sigma_config.yaml
 curl -s $GITHUB_BASE_URL/data/sigma_rule_status.csv >timesketch/etc/timesketch/sigma_rule_status.csv
-curl -s $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml >timesketch/etc/timesketch/sigma/rules/lnx_susp_zmap.yml
-curl -s $GITHUB_BASE_URL/data/plaso_formatters.yaml >timesketch/etc/timesketch/plaso_formatters.yaml
-curl -s $GITHUB_BASE_URL/data/context_links.yaml >timesketch/etc/timesketch/context_links.yaml
+curl -s $GITHUB_BASE_URL/data/timesketch.conf >timesketch/etc/timesketch/timesketch.conf
+curl -s $GITHUB_BASE_URL/data/winevt_features.yaml >timesketch/etc/timesketch/winevt_features.yaml
+
+# Replace the original tagger
+GITHUB_COMMIT_blueteam0ps=${GITHUB_COMMIT_blueteam0ps:-"07d4df90d8686b8379f97c5755dd9ebe5f534ca9"} # Default to the latest commit
+GITHUB_URL_blueteam0ps="https://raw.githubusercontent.com/blueteam0ps/AllthingsTimesketch/${GITHUB_COMMIT_blueteam0ps}"
+curl -o timesketch/etc/timesketch/tags.yaml -s "${GITHUB_URL_blueteam0ps}"/tags.yaml
 
 # TODO: we don't use an nginx on this level
 #curl -s $GITHUB_BASE_URL/contrib/nginx.conf > timesketch/etc/nginx.conf
@@ -194,3 +196,29 @@ if [ "$CREATE_USER" != "${CREATE_USER#[Yy]}" ]; then
   echo "TIMESKETCH_USERNAME=$NEWUSERNAME" >> "$home_path/scripts/.env"
   echo "TIMESKETCH_PASSWORD=$NEWUSERNAME_PASSWORD" >> "$home_path/scripts/.env"
 fi
+
+echo "############################################"
+echo "Creating a username for importing data"
+echo "############################################"
+docker compose exec timesketch-web tsctl create-user "${IMPORT_USER_NAME}" --password "${IMPORT_USER_PASSWORD}" \
+&& echo "New user has been created"
+
+# TASK-8911: auto analyzers run
+CONFIG_FILE=timesketch/etc/timesketch/timesketch.conf
+ANALYZERS='["feature_extraction","sessionizer","geo_ip_maxmind_db","browser_search","domain","phishy_domains","sigma","hashr_lookup","evtx_gap","chain","ssh_sessionizer","ssh_bruteforce_sessionizer","web_activity_sessionizer","similarity_scorer","win_crash","browser_timeframe","safebrowsing","gcp_servicekey","gcp_logging","misp_analyzer","hashlookup_analyzer"]'
+
+# Update the AUTO_SKETCH_ANALYZERS line if it exists
+sudo sed -i "/^AUTO_SKETCH_ANALYZERS = / c\AUTO_SKETCH_ANALYZERS = $ANALYZERS" "$CONFIG_FILE"
+
+# Add the AUTO_SKETCH_ANALYZERS line if it does not exist
+if ! sudo grep -q '^AUTO_SKETCH_ANALYZERS = ' "$CONFIG_FILE"; then
+  echo "AUTO_SKETCH_ANALYZERS does not exist in the config file. Adding it."
+  echo "AUTO_SKETCH_ANALYZERS = $ANALYZERS" | sudo tee -a "$CONFIG_FILE"
+fi
+
+echo "############################################"
+echo "### Restarting the Timesketch container ###"
+docker compose restart timesketch-web
+docker compose restart timesketch-web-legacy
+docker compose restart timesketch-worker
+echo "############################################"
