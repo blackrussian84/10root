@@ -2,7 +2,7 @@
 
 **Goal**: The goal of this project is to create a stack of services that can be used for incident response and threat hunting.
 
-**Description**: This stack contains a set of the services, which are combined with the docker-compose file. Each app has its own folder with the docker-compose file, all apps use one network.
+**Description**: This stack contains a set of the services, which are combined with the docker compose file. Each app has its own folder with the docker compose file, all apps use one network.
 
 ## Current status
 
@@ -27,13 +27,14 @@ All scripts are located in the `scripts` folder.
 The following scripts are available:
 - `endtoend.sh` - start the stack
 - `cleanup.sh` - stop and remove the stack
+  - Use `cleanup.sh --help` to see the available options
 
 ## Pre-requirements
 
 TODO: Fix the `install_pre_requisites.sh` logic
 
 - Docker; client and server ~ 20.10
-- Docker-compose plugin v2 ~ 2.26
+- docker compose plugin v2 ~ 2.26
 - Git ~ 2.34
 - [yq](https://github.com/mikefarah/yq/#install) ~ 4.44
 - bash shell ~ 5.0
