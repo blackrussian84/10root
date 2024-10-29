@@ -33,8 +33,7 @@ docker compose stop
 
 # Step 3: Update some settings
 # TODO: 777 permissions are not secure, should we use 755 instead?
-sudo chmod 777 -R "${workdir}/${service_name}/velociraptor"
-sudo chmod 777 -R "${workdir}/${service_name}/velociraptor/clients"
+sudo chmod 755 -R "${workdir}/${service_name}/velociraptor"
 cd velociraptor
 
 # TODO: Should we use the entrypoint only or this way to copy custom folder?
