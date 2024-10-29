@@ -18,13 +18,17 @@ rsync -a "${src_dir}/entrypoint" .
 rsync -a "${src_dir}/Dockerfile" .
 rsync -a "${src_dir}/.env" .
 
-# Define here env variables to replace in the .env file
-replace_env "VELOX_USER"
+# Grab variables from the default.env file and add them to the .env file to use int he docker-compose
 replace_env "VELOX_PASSWORD"
-replace_env "VELOX_SERVER_URL"
+replace_env "VELOX_ROLE"
+replace_env "VELOX_USER"
+
 replace_env "VELOX_FRONTEND_HOSTNAME"
-replace_env "VELOX_USER_2"
+replace_env "VELOX_SERVER_URL"
+
 replace_env "VELOX_PASSWORD_2"
+replace_env "VELOX_ROLE_2"
+replace_env "VELOX_USER_2"
 
 docker compose up -d --build
 print_yellow "Waiting for the $service_name service to start..."
