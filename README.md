@@ -9,7 +9,7 @@
 The current implementation is a POC, which is not stable from time to time. The main goal is to have a working stack with the following services:
 
 <details>
-  <summary>CLick to open the list of the APPS</summary>
+  <summary>Click to open the list of the APPS</summary>
 
 This stack is growing, you find a complete list of the services in the file `resources/default.env` in the environment variable `APPS_TO_INSTALL`.
 
@@ -41,7 +41,7 @@ The following scripts are available:
 ## Pre-requirements
 
 <details>
-  <summary>CLick to open the list of the pre-requirements</summary>
+  <summary>Click to open the list of the pre-requirements</summary>
 
 This stack is growing,
 you find a complete list of the requirements in the file `resources/default.env` in the environment variable `REQUIRED_PACKAGES`.
