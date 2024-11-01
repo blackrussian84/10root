@@ -31,7 +31,7 @@ function get_env_value() {
 # $2 - key to replace
 function replace_env() {
   local key=$1
-  local env_file=${2:-"${scripts_dir}/${service_name}/.env"}
+  local env_file=${2:-"${workdir}/${service_name}/.env"}
 
   if [[ -v $key ]]; then
     # Replace if the key exists, otherwise add it
