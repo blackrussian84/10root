@@ -36,18 +36,14 @@ sleep 5
 docker compose stop
 
 # Step 3: Update some settings
-# TODO: 777 permissions are not secure, should we use 755 instead?
 sudo chmod 755 -R "${workdir}/${service_name}/velociraptor"
-# Find binaries files and make them executable and readable
-find "${workdir}/${service_name}/velociraptor" -type f -exec chmod 777 {} \;
-cd velociraptor
 
 # TODO: Should we use the entrypoint only or this way to copy custom folder?
 # https://github.com/10RootOrg/Risx-MSSP/blob/ca9659236cc93989bd00c4c499db9d278753a6e4/setup_platform/resources/velociraptor/entrypoint#L41
-sudo rsync -a "${src_dir}/custom/" .
+sudo rsync -a "${src_dir}/custom" .
 print_yellow "Add custom resources and restarting the $service_name service..."
 
-# Add custom artifacts
+# Step 3.1: Add custom artifacts
 cd "${workdir}/${service_name}"
 if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
   download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
@@ -57,6 +53,15 @@ if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
   sudo rsync -r server_artifacts/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
   sudo rm -rf server_artifacts
   sudo rm -rf velociraptor_artifacts.zip
+fi
+
+if [ -d custom ]; then
+  echo "Using custom artifacts"
+  sudo mv custom/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
+  sudo rm -rf custom
+  sudo chown -R root:root "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
+else
+  echo "Artifacts not found, using entrypoint artifacts"
 fi
 
 # Step 4: Finally restart the service
