@@ -35,11 +35,9 @@ print_yellow "Waiting for the $service_name service to start..."
 sleep 5
 docker compose stop
 
-# Step 3: Update some settings
+# Step 3: Update permissions and add custom resources
 sudo chmod 755 -R "${workdir}/${service_name}/velociraptor"
 
-# TODO: Should we use the entrypoint only or this way to copy custom folder?
-# https://github.com/10RootOrg/Risx-MSSP/blob/ca9659236cc93989bd00c4c499db9d278753a6e4/setup_platform/resources/velociraptor/entrypoint#L41
 sudo rsync -a "${src_dir}/custom" .
 print_yellow "Add custom resources and restarting the $service_name service..."
 
