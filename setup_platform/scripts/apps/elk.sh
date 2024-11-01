@@ -13,6 +13,7 @@ source "./libs/install-helper.sh"
 
 # App specific variables
 ELK_GIT_COMMIT=${ELK_GIT_COMMIT:-"629aea49616ae8a4184b5e68da904cb88e69831d"}
+
 # Step 0: Clone only the specific commit "629aea4" from the repository
 # TODO: Actually it's not really good approach to prepare an environment for the ELK stack. Use local files and prebuild images instead.
 printf "Cloning the repository and checking out commit %s...\n" "$ELK_GIT_COMMIT"
@@ -30,6 +31,14 @@ git checkout "$ELK_GIT_COMMIT"
 
 # Step 1: Pre-installation
 pre_install "elk"
+replace_env "ELASTIC_PASSWORD"
+replace_env "LOGSTASH_INTERNAL_PASSWORD"
+replace_env "KIBANA_SYSTEM_PASSWORD"
+replace_env "METRICBEAT_INTERNAL_PASSWORD"
+replace_env "FILEBEAT_INTERNAL_PASSWORD"
+replace_env "HEARTBEAT_INTERNAL_PASSWORD"
+replace_env "MONITORING_INTERNAL_PASSWORD"
+replace_env "BEATS_SYSTEM_PASSWORD"
 
 # Step 2: Use Docker Compose to bring up the setup service and then the rest of the services in detached mode
 printf "Starting up the setup service...\n"
