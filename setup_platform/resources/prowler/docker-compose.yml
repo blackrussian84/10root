@@ -1,0 +1,15 @@
+services:
+  prowler:
+    image: toniblyx/prowler:${PROWLER_IMAGE_TAG}
+    container_name: prowler
+    env_file:
+      - .env
+    volumes:
+      - ./prowler-output:/prowler/output
+    restart: unless-stopped
+    networks:
+        - main_network
+
+networks:
+  main_network:
+    external: true
