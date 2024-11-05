@@ -19,4 +19,6 @@ printf "Starting the service...\n"
 docker compose up -d --force-recreate
 
 # Step 3: Post-installation output
+# Add output from the prowler README.md
+docker run --rm -it -e "TERM=xterm-256color" -v "${workdir}/${service_name}":/tmp ghcr.io/charmbracelet/glow:v2.0 /tmp/README.md
 print_green_v2 "$service_name deployment started." "Successfully"
