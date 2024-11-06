@@ -31,10 +31,15 @@ function get_env_value() {
 # $2 - key to replace
 function replace_env() {
   local key=$1
-  local env_file=${2:-"${scripts_dir}/${service_name}/.env"}
+  local env_file=${2:-"${workdir}/${service_name}/.env"}
 
   if [[ -v $key ]]; then
-    sed -i "s|${key}=.*|${key}=\"${!key}\"|" "$env_file"
+    # Replace if the key exists, otherwise add it
+    if grep -q "^${key}=" "$env_file"; then
+      sed -i "s|${key}=.*|${key}=${!key}|" "$env_file"
+    else
+      echo "${key}=${!key}" >>"$env_file"
+    fi
   else
     print_yellow "The env variable $key is not provided"
   fi

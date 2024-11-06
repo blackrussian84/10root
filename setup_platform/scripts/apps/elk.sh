@@ -13,6 +13,7 @@ source "./libs/install-helper.sh"
 
 # App specific variables
 ELK_GIT_COMMIT=${ELK_GIT_COMMIT:-"629aea49616ae8a4184b5e68da904cb88e69831d"}
+
 # Step 0: Clone only the specific commit "629aea4" from the repository
 # TODO: Actually it's not really good approach to prepare an environment for the ELK stack. Use local files and prebuild images instead.
 printf "Cloning the repository and checking out commit %s...\n" "$ELK_GIT_COMMIT"
@@ -30,6 +31,14 @@ git checkout "$ELK_GIT_COMMIT"
 
 # Step 1: Pre-installation
 pre_install "elk"
+replace_env "ELASTIC_PASSWORD"
+replace_env "LOGSTASH_INTERNAL_PASSWORD"
+replace_env "KIBANA_SYSTEM_PASSWORD"
+replace_env "METRICBEAT_INTERNAL_PASSWORD"
+replace_env "FILEBEAT_INTERNAL_PASSWORD"
+replace_env "HEARTBEAT_INTERNAL_PASSWORD"
+replace_env "MONITORING_INTERNAL_PASSWORD"
+replace_env "BEATS_SYSTEM_PASSWORD"
 
 # Step 2: Use Docker Compose to bring up the setup service and then the rest of the services in detached mode
 printf "Starting up the setup service...\n"
@@ -41,10 +50,11 @@ sudo docker compose up -d
 # Step 4: Import all dashboards to Kibana
 printf "Waiting for Kibana to be ready...\n"
 sleep 10
-while ! docker compose exec kibana curl -s http://localhost:5601/api/status | grep -q '"overall":{"level":"available","summary":"All services and plugins are available"}'; do
+while ! docker compose exec kibana curl -s -u "${KIBANA_SYSTEM_USER}":"${KIBANA_SYSTEM_PASSWORD}" http://localhost:5601/api/status | grep -q '"overall":{"level":"available","summary":"All services and plugins are available"}'; do
   printf "Sleeping 5; Still waiting for Kibana to be ready...\n"
   sleep 5
 done
+
 # Explaining the command below:
 # Import all dashboards to the Kibana
 #for file in /usr/share/kibana/dashboards/*.ndjson; do
@@ -54,7 +64,10 @@ done
 #    file=@"$file"
 #done
 docker compose exec kibana /bin/bash -c \
-  "for file in /usr/share/kibana/dashboards/*.ndjson; do echo \"Importing \$file\"; curl -s -X POST -H 'kbn-xsrf: true' -H \"securitytenant: global\" http://localhost:5601/api/saved_objects/_import?overwrite=true --form file=@\"\$file\"; done"
+"for file in /usr/share/kibana/dashboards/*.ndjson; do echo \"Importing \$file\"; curl -s -X POST -H 'kbn-xsrf: true' -u ${KIBANA_SYSTEM_USER}:${KIBANA_SYSTEM_PASSWORD} -H \"securitytenant: global\" http://localhost:5601/api/saved_objects/_import?overwrite=true --form file=@\"\$file\"; done"
 
 printf "\n"
+print_with_border "Kibana credentials"
+printf "User: %s\n" "${KIBANA_SYSTEM_USER}"
+printf "Password: %s\n" "${KIBANA_SYSTEM_PASSWORD}"
 print_green_v2 "$service_name deployment started." "Successfully"

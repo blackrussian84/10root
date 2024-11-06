@@ -18,31 +18,30 @@ rsync -a "${src_dir}/entrypoint" .
 rsync -a "${src_dir}/Dockerfile" .
 rsync -a "${src_dir}/.env" .
 
-# Define here env variables to replace in the .env file
-replace_env "VELOX_USER"
+# Grab variables from the default.env file and add them to the .env file to use int he docker-compose
 replace_env "VELOX_PASSWORD"
-replace_env "VELOX_SERVER_URL"
+replace_env "VELOX_ROLE"
+replace_env "VELOX_USER"
+
 replace_env "VELOX_FRONTEND_HOSTNAME"
-replace_env "VELOX_USER_2"
+replace_env "VELOX_SERVER_URL"
+
 replace_env "VELOX_PASSWORD_2"
+replace_env "VELOX_ROLE_2"
+replace_env "VELOX_USER_2"
 
 docker compose up -d --build
 print_yellow "Waiting for the $service_name service to start..."
 sleep 5
 docker compose stop
 
-# Step 3: Update some settings
-# TODO: 777 permissions are not secure, should we use 755 instead?
-sudo chmod 777 -R "${workdir}/${service_name}/velociraptor"
-sudo chmod 777 -R "${workdir}/${service_name}/velociraptor/clients"
-cd velociraptor
+# Step 3: Update permissions and add custom resources
+sudo chmod 755 -R "${workdir}/${service_name}/velociraptor"
 
-# TODO: Should we use the entrypoint only or this way to copy custom folder?
-# https://github.com/10RootOrg/Risx-MSSP/blob/ca9659236cc93989bd00c4c499db9d278753a6e4/setup_platform/resources/velociraptor/entrypoint#L41
-sudo rsync -a "${src_dir}/custom/" .
+sudo rsync -a "${src_dir}/custom" .
 print_yellow "Add custom resources and restarting the $service_name service..."
 
-# Add custom artifacts
+# Step 3.1: Add custom artifacts
 cd "${workdir}/${service_name}"
 if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
   download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
@@ -52,6 +51,15 @@ if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
   sudo rsync -r server_artifacts/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
   sudo rm -rf server_artifacts
   sudo rm -rf velociraptor_artifacts.zip
+fi
+
+if [ -d custom ]; then
+  echo "Using custom artifacts"
+  sudo mv custom/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
+  sudo rm -rf custom
+  sudo chown -R root:root "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
+else
+  echo "Artifacts not found, using entrypoint artifacts"
 fi
 
 # Step 4: Finally restart the service
