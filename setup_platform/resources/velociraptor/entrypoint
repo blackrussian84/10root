@@ -45,13 +45,6 @@ else
   mv /tmp/server.config.yaml /velociraptor/.
 fi
 
-# TODO: Should we use the mounted custom artifacts or entrypoint artifacts?
-# https://github.com/10RootOrg/Risx-MSSP/blob/f0b69089ea09131a7522367322baa1bd66c70c4a/setup_platform/scripts/velociraptor_script.sh#L49
-if [ -d custom ]; then
-  echo "Using custom artifacts"
-  cp -r custom "${DATASTORE_LOCATION}"/artifact_definitions
-fi
-
 # Re-generate client config in case server config changed
 CURRENT_CONFIG=$(./velociraptor --config server.config.yaml config client)
 if [ -f client.config.yaml ]; then
@@ -73,6 +66,8 @@ fi
 ./velociraptor config repack --exe clients/mac/velociraptor_client client.config.yaml clients/mac/velociraptor_client_repacked
 ./velociraptor config repack --exe clients/windows/velociraptor_client.exe client.config.yaml clients/windows/velociraptor_client_repacked.exe
 ./velociraptor config repack --msi clients/windows/velociraptor_client.msi client.config.yaml clients/windows/velociraptor_client_repacked.msi
+
+find "./clients" -type f -exec chmod 777 {} \;
 
 # Start Velociraptor
 ./velociraptor --config server.config.yaml frontend -v
