@@ -22,16 +22,18 @@ done
 deploy_service "nginx"
 
 # --- Show endpoints to access the services
-MYIP=$(curl -s ifconfig.me)
+MYIP=${MYIP:-$(curl -s ifconfig.me)}
+PROTO=${PROTO:-https}
 ENDPOINTS=(
-"cyberchef    : https://$MYIP/cyberchef/"
-"elk          : https://$MYIP/kibana/"
-"iris-web     : https://$MYIP:8443/"
-"nightingale  : https://$MYIP/nightingale/"
-"portainer    : https://$MYIP/portainer/"
-"strelka      : https://$MYIP:8843/"
-"timesketch   : https://$MYIP/"
-"velociraptor : https://$MYIP/velociraptor"
+"cyberchef    : $PROTO://$MYIP/cyberchef/"
+"elk          : $PROTO://$MYIP/kibana/"
+"iris-web     : $PROTO://$MYIP:8443/"
+"nightingale  : $PROTO://$MYIP/nightingale/"
+"portainer    : $PROTO://$MYIP/portainer/"
+"prowler      : $PROTO://$MYIP:8844/"
+"strelka      : $PROTO://$MYIP:8843/"
+"timesketch   : $PROTO://$MYIP/"
+"velociraptor : $PROTO://$MYIP/velociraptor"
 )
 print_green "All the docker services are deployed successfully."
 print_with_border "Access the services using below links"
