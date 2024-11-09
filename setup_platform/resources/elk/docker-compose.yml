@@ -12,14 +12,14 @@ services:
       - ./setup/lib.sh:/lib.sh:ro,Z
       - ./setup/roles:/roles:ro,Z
     environment:
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
-      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
-      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
-      METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
       FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
       HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
-      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
     networks:
       - main_network
     depends_on:
@@ -92,6 +92,9 @@ services:
     environment:
       xpack.security.enabled: "true"
       xpack.spaces.enabled: "false"
+      # Allow open kibana dashboards in the iframe
+      xpack.security.authc.providers.anonymous.anonymous1.credentials.username: ${KIBANA_SA_USER}
+      xpack.security.authc.providers.anonymous.anonymous1.credentials.password: ${KIBANA_SA_PASSWORD}
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       SERVER_NAME: http://host.docker.internal/kibana
       SERVER_BASEPATH: /kibana
