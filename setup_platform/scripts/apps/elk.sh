@@ -31,14 +31,19 @@ git checkout "$ELK_GIT_COMMIT"
 
 # Step 1: Pre-installation
 pre_install "elk"
-replace_env "ELASTIC_PASSWORD"
-replace_env "LOGSTASH_INTERNAL_PASSWORD"
-replace_env "KIBANA_SYSTEM_PASSWORD"
-replace_env "METRICBEAT_INTERNAL_PASSWORD"
-replace_env "FILEBEAT_INTERNAL_PASSWORD"
-replace_env "HEARTBEAT_INTERNAL_PASSWORD"
-replace_env "MONITORING_INTERNAL_PASSWORD"
-replace_env "BEATS_SYSTEM_PASSWORD"
+
+# Step 1.1:  Setup ENV variables
+# Replace all existing keys from the .env file to the env variable in the memory (from default.env)
+# input: BEATS_SYSTEM_PASSWORD=
+# Output: BEATS_SYSTEM_PASSWORD=$BEATS_SYSTEM_PASSWORD
+# Read each line from the .env file, ignoring commented lines
+grep -v '^#' .env | while read -r line; do
+    # Extract the key from the line
+    key=$(echo "$line" | sed -E 's/(.*)=.*/\1/')
+    # Replace the environment variable with the value from the .env file
+    replace_env "${key}"
+done
+replace_env "ELASTIC_VERSION"
 
 # Step 2: Use Docker Compose to bring up the setup service and then the rest of the services in detached mode
 printf "Starting up the setup service...\n"
@@ -47,7 +52,7 @@ sudo docker compose up setup
 printf "Starting the service...\n"
 sudo docker compose up -d
 
-# Step 4: Import all dashboards to Kibana
+# Step 3: Import all dashboards to Kibana
 printf "Waiting for Kibana to be ready...\n"
 sleep 10
 while ! docker compose exec kibana curl -s -u "${KIBANA_SYSTEM_USER}":"${KIBANA_SYSTEM_PASSWORD}" http://localhost:5601/api/status | grep -q '"overall":{"level":"available","summary":"All services and plugins are available"}'; do
