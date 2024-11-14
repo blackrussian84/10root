@@ -56,3 +56,5 @@ you find a complete list of the requirements in the file `resources/default.env`
 - rsync ~ 3.2
 
 </details>
+
+our version is a modified version of the original code
