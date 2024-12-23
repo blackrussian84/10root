@@ -34,6 +34,8 @@ ENDPOINTS=(
 "strelka      : $PROTO://$MYIP:8843/"
 "timesketch   : $PROTO://$MYIP/"
 "velociraptor : $PROTO://$MYIP/velociraptor"
+"misp         : $PROTO://$MYIP/misp/"
+"opencti      : $PROTO://$MYIP/opencti/"
 )
 print_green "All the docker services are deployed successfully."
 print_with_border "Access the services using below links"
