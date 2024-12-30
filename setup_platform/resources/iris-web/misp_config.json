@@ -1,7 +1,0 @@
-{
-  "name": "10root_MISP",
-  "type":"private",
-  "url":["https://tenroot-misp.northeurope.cloudapp.azure.com"],
-  "key":["CHANGE_ME"],
-  "ssl":[false]
-}
