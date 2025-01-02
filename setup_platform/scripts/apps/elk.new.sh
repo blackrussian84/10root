@@ -6,17 +6,34 @@
 # Exit immediately if a command exits with a non-zero status
 set -euo pipefail
 
-source "./libs/main.sh"
-source "./libs/install-helper.sh"
+# shellcheck source=../libs/main.sh disable=SC1091
+source "$(dirname "$(readlink -f "$0")")/../libs/main.sh"
+# shellcheck source=../libs/install-helper.sh disable=SC1091
+source "$(dirname "$(readlink -f "$0")")/../libs/install-helper.sh"
 
 define_env
 define_paths
+
+# Ensure required functions are defined
+function pre_install() {
+  printf "Running pre-install steps for %s...\n" "$1"
+  # Add any pre-install commands here
+}
+
+function replace_env() {
+  local key="$1"
+  local value="${!key}"
+  if [ -n "$value" ]; then
+    sed -i "s|^${key}=.*|${key}=${value}|" .env
+  fi
+}
 
 # App specific variables
 ELK_GIT_COMMIT=${ELK_GIT_COMMIT:-"629aea49616ae8a4184b5e68da904cb88e69831d"}
 
 function clone_repository() {
   printf "Cloning the repository and checking out commit %s...\n" "$ELK_GIT_COMMIT"
+  workdir=$(pwd)
   if [ -d "${workdir}/elk" ]; then
     print_red "The directory ${workdir}/elk already exists. Please remove it before running the script."
     print_red "You can run the following command to remove the directory:"
@@ -81,9 +98,20 @@ function cleanup() {
 
 trap cleanup EXIT
 
+  # Main entry point for the script.
+  #
+  # This function is responsible for:
+  # 1. Checking if KIBANA_SYSTEM_USER and KIBANA_SYSTEM_PASSWORD are set.
+  # 2. Cloning the ELK repository and checking out the specified commit.
+  # 3. Running the pre-install steps.
+  # 4. Setting up the environment variables.
+  # 5. Starting the services.
+  # 6. Importing the dashboards.
+  # 7. Printing the Kibana credentials.
+  # 8. Printing a success message.
 function main() {
   if [ -z "${KIBANA_SYSTEM_USER:-}" ] || [ -z "${KIBANA_SYSTEM_PASSWORD:-}" ]; then
-    print_red "KIBANA_SYSTEM_USER and KIBANA_SYSTEM_PASSWORD must be set."
+  print_green_v2 "$service_name deployment completed." "Successfully"
     exit 1
   fi
 
@@ -96,7 +124,8 @@ function main() {
   printf "\n"
   print_with_border "Kibana credentials"
   printf "User: %s\n" "${KIBANA_SYSTEM_USER}"
-  printf "Password: %s\n" "${KIBANA_SYSTEM_PASSWORD}"
+  service_name="ELK"
+  print_green_v2 "$service_name deployment started." "Successfully"
   print_green_v2 "$service_name deployment started." "Successfully"
 }
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+# shellcheck source=/dev/null
 set -eo pipefail
 
-source libs/main.sh
+source "$(dirname "$0")/libs/main.sh"
 define_env
 define_paths
 
@@ -26,14 +27,14 @@ app_down() {
     cd "$(dirname "$file")" || exit
     docker compose down --volumes --remove-orphans --timeout 1
     cd - || exit
-  done < <(find "${workdir}/${app_name}" -maxdepth 2 -name docker-compose.yaml -print0 -o -name docker-compose.yml -print0 -o -name compose.yaml -print0)
+  done < <(find "${workdir:?}/${app_name}" -maxdepth 2 -name docker-compose.yaml -print0 -o -name docker-compose.yml -print0 -o -name compose.yaml -print0)
 }
 
 cleanup_all_force() {
   print_yellow "Cleaning up FORCE all docker containers and related files ..."
-  docker container stop $(docker container ls -aq) || print_yellow "No containers to stop"
-  docker container rm $(docker container ls -aq) || print_yellow "No containers to remove"
-  docker network rm $(docker network ls -q) || true
+  docker container stop "$(docker container ls -aq)" || print_yellow "No containers to stop"
+  docker container rm "$(docker container ls -aq)" || print_yellow "No containers to remove"
+  docker network rm "$(docker network ls -q)" || true
 
   printf "Cleaning up related workdir...\n"
   sudo rm -rf "${workdir}"/*

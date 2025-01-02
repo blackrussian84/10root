@@ -57,7 +57,8 @@ function check_home_path() {
 function get_env_value() {
   local key=$1
   local env_file=${2:-"${workdir}/${service_name}/.env"}
-  local value=$(sed -n "s/^${key}=//p" "$env_file")
+  local value
+  value=$(sed -n "s/^${key}=//p" "$env_file")
   printf "%s\n" "$value"
 }
 
@@ -113,14 +114,30 @@ function pre_install() {
   curr_dir=$(pwd)
 
   mkdir -p "${workdir}/${service_name}"
-  cd "${workdir}/${service_name}"
 
   # Step 1: Copy app related files
   if [ "$copy_files" = true ]; then
-    printf "Copying app related files from %s...\n" "$src_dir"
-    rsync -a "$src_dir/" .
+    if [ -d "$src_dir" ]; then
+      printf "Copying app related files from %s...\n" "$src_dir"
+      rsync -a "$src_dir/" "${workdir}/${service_name}/"
+    else
+      print_red "Source directory $src_dir does not exist. Exiting."
+      exit 1
+    fi
   else
     printf "Skipping copying app related files.\n"
+  fi
+
+  # Change to the directory where the docker-compose.yml file is located
+  cd "${workdir}/${service_name}"
+
+  # Change to the directory where the docker-compose.yml file is located
+  cd "${workdir}/${service_name}"
+
+  # Check if docker-compose.yml exists in the directory
+  if [ ! -f "docker-compose.yml" ] && [ ! -f "docker-compose.yaml" ] && [ ! -f "compose.yml" ] && [ ! -f "compose.yaml" ]; then
+    print_red "Can't find a suitable configuration file in ${workdir}/${service_name}. Exiting."
+    exit 1
   fi
 
   cd "$curr_dir"

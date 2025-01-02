@@ -33,6 +33,8 @@ function cleanup_docker() {
 # shellcheck disable=SC2120
 function cleanup_dependencies() {
   ENV_FILE=${1:-"../resources/default.env"}
+  # shellcheck source=../resources/default.env
+  # shellcheck source=../resources/default.env
   source "$ENV_FILE"
   # Cleanup dependencies
   echo "Cleaning up dependencies..."
@@ -62,8 +64,8 @@ function add_docker_as_sudoer() {
 function install_docker_compose_plugin() {
   echo "Installing docker compose plugin"
 
-  # Legacy docker-compose command
-  sudo curl --show-error --silent --location --output /usr/local/bin/docker-compose \
+    curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     https://github.com/docker/compose/releases/download/v"${DOCKER_COMPOSE_VERSION}"/docker-compose-$(uname -s)-$(uname -m)
   sudo chmod +x /usr/local/bin/docker-compose
 
@@ -102,8 +104,7 @@ function install_docker() {
 function create_docker_network() {
   local NETWORK_NAME=${NETWORK_NAME:-"main_network"}
   printf "Creating Docker network: %s\n" "$NETWORK_NAME"
-  # Create Docker network
-  if [[ $(docker network ls --format '{{.Name}}' | grep -w "$NETWORK_NAME") ]]; then
+  if docker network ls --format '{{.Name}}' | grep -qw "$NETWORK_NAME"; then
     echo "Network '$NETWORK_NAME' already exists. Skipping creation..."
   else
     sudo docker network create "$NETWORK_NAME"

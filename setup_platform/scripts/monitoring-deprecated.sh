@@ -2,7 +2,7 @@
 # TODO:Do we really need this?
 
 # TODO: {"statusCode":409,"error":"Conflict","message":"Saved object [index-pattern/artifact] conflict"}Done!
-while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601)" != "302" ]]; do 
+while [[ "$(curl -s -o /dev/null -w '%{http_code}' localhost:5601)" != "302" ]]; do 
   echo "Waiting on Kibana to be ready..."
   sleep 1
 done

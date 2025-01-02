@@ -36,6 +36,9 @@ print_yellow() {
 print_with_border() {
   local input_string="$1"
   local length=${#input_string}
+  local border_len=$(( (80 - length) / 2 ))
+  local extra_char=$(( (80 - length) % 2 ))
+  printf "%${border_len}s %s %${border_len}s%s\n" "=" "$input_string" "=" "$extra_char"
   local border="===================== "
   # Calculate the length of the border
   local border_length=$(((80 - length - ${#border}) / 2))
@@ -62,6 +65,7 @@ define_env() {
   local env_file=${1:-"../workdir/.env"}
 
   if [ -f "$env_file" ]; then
+    # shellcheck source=/dev/null
     source "$env_file"
     printf "%s is loaded\n" "$env_file"
   else
@@ -76,7 +80,8 @@ define_paths() {
   else
     home_path="/home/$(whoami)/setup_platform"
   fi
-  resources_dir="$home_path/resources"
-  scripts_dir="$home_path/scripts"
+  export resources_dir="$home_path/resources"
+  export scripts_dir="$home_path/scripts"
+  export workdir="$home_path/workdir"
   workdir="$home_path/workdir"
 }

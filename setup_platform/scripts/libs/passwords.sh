@@ -6,31 +6,29 @@ function _list_passwords_from_compose() {
   local workdir=$1
 
   if [[ -e "${workdir}/docker-compose.yml" || -e "${workdir}/docker-compose.yaml" ]]; then
-    local name=$(ls "${workdir}"/docker-compose.y* | grep -E 'ya?ml$' | head -n 1)
+    local name
+    name=$(find "${workdir}" -maxdepth 1 -name 'docker-compose.y*' | grep -E 'ya?ml$' | head -n 1)
     # Env secrets
     mapfile -t env_secrets < <(sed -n 's#.*\(env\..*\.secret\).*#\1#p' "${name}" | sort | uniq)
     if [[ ${#env_secrets[@]} -gt 0 ]]; then
       printf "%s\n" "${env_secrets[@]}"
     fi
+    mapfile -t build_secrets < <(sed -En 's#.*:\s*(\b.*\.passwd).*#\1#p' "${name}" | sort | uniq)
     if [[ ${#build_secrets[@]} -gt 0 ]]; then
       printf "%s\n" "${build_secrets[@]}"
     fi
-    mapfile -t build_secrets < <(sed -En 's#.*:\s*(\b.*\.passwd).*#\1#p' "${name}" | sort | uniq)
     printf "%s\n" "${build_secrets[@]}"
   fi
 }
 
-  if [[ ${#env_files[@]} -gt 0 ]]; then
-    printf "%s\n" "${env_files[@]}"
-  if [[ ${#passwd_files[@]} -gt 0 ]]; then
-    printf "%s\n" "${passwd_files[@]}"
-  fi
+_list_password_files() {
   local workdir=$1
 
-  mapfile -t env_files < <(find "$workdir" -type f -not -empty -name 'env.*.secret' -exec basename {} \;)
-  printf "%s\n" "${env_files[@]}"
-  mapfile -t passwd_files < <(find "$workdir" -type f -not -empty -name '*.passwd' -exec basename {} \;)
-  printf "%s\n" "${passwd_files[@]}"
+  # shellcheck disable=SC2044
+  for i in "$workdir"/env.*.secret "$workdir"/*.passwd; do
+    [[ -f $i ]] || continue
+    printf '%s\n' "${i##*/}"
+  done
 }
 
 function check_password_generator() {
@@ -40,9 +38,8 @@ function check_password_generator() {
   fi
 }
 
-function setup_shell() {
-  # We can not rely on ${SHELL} variable
-  export SH=${SH:-/bin/bash}
+setup_shell() {
+  SH=${SH:-$(command -v bash)}
 }
 
 function generate_passwords_if_required() {
@@ -51,8 +48,7 @@ function generate_passwords_if_required() {
   printf "Start generating passwords...\n"
   if [[ "${GENERATE_PASSWORDS}234${GENERATE_ALL_PASSWORDS}" != 234 ]]; then
     mapfile -t required < <(_list_passwords_from_compose "$workdir")
-          sh -c "${PASSWORD_GENERATOR}" > "${workdir}/${var}"
-      mapfile -t existing < <(_list_password_files_with_passwords "$workdir")
+    mapfile -t existing < <(_list_password_files "$workdir")
       if [[ ${#existing[@]} -gt 0 ]]; then
         # Two matching names means we have the same thing defined in docker-compose.yaml and env secrets
         mapfile -t defined < <(printf "%s\n%s\n" "${required[@]}" "${existing[@]}" | sort | uniq -c | sort -rn | grep -E '\s*2' | awk '{print $2}')
@@ -62,13 +58,11 @@ function generate_passwords_if_required() {
           printf "%s\n" "$(sh -c "${PASSWORD_GENERATOR}")" > "${workdir}/${var}"
         done
       fi
-    else
       for var in "${required[@]}"; do
         printf "%s\n" "$(sh -c "${PASSWORD_GENERATOR}")" > "${workdir}/${var}"
       done
     fi
-  fi
-}
+  }
 
 setup_shell
 check_password_generator
