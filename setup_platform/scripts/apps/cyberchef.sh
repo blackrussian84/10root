@@ -12,6 +12,7 @@ source "./libs/install-helper.sh"
 pre_install "cyberchef"
 
 # Step 2: Start the service
+service_name="cyberchef"
 printf "Starting the service...\n"
 sudo docker compose up -d --force-recreate
 

@@ -4,13 +4,16 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-source "./libs/main.sh"
+source "$(dirname "$0")/libs/main.sh"
 define_env
 define_paths
-source "./libs/install-helper.sh"
+source "$(dirname "$0")/libs/install-helper.sh"
 
 # App specific variables
 IRIS_GIT_COMMIT=${IRIS_GIT_COMMIT:-"v2.4.10"}
+workdir=${workdir:-"/default/workdir"}
+src_dir=${src_dir:-"/default/src_dir"}
+curr_dir=$(dirname "$0")
 
 # Step 0: Clone only the specific commit
 printf "Cloning the repository and checking out commit %s...\n" "$IRIS_GIT_COMMIT"
@@ -60,8 +63,8 @@ if [[ $GENERATE_ALL_PASSWORDS =~ ^[Yy]$ || $GENERATE_ALL_PASSWORDS =~ ^[Yy][Ee][
   echo "IRIS_ADM_USERNAME=administrator" >> "$workdir/.env"
   echo "IRIS_ADM_PASSWORD=$(cat env.IRIS_ADM_PASSWORD.secret)" >> "$workdir/.env"
 fi
-
-# Step 4: Build and bring up the services
+docker-compose build
+docker-compose up -d --force-recreate
 printf "Building and bringing up the services...\n"
 docker compose build
 docker compose up -d --force-recreate
@@ -69,7 +72,7 @@ docker compose up -d --force-recreate
 # Step 5: Enable VT module if the IRIS_VT_MODULE_ENABLED is true
 if [[ "$IRIS_VT_MODULE_ENABLED" == "true" || $IRIS_MISP_MODULE_ENABLED == "true" ]]; then
   timeout=10
-  printf "Enabling Iris modules\nWaiting %s s for the services to start...\n" "$timeout"
+  while [[ $(docker-compose logs app | grep -c "IRIS IS READY") -eq 0 ]]; do
   sleep $timeout
   # Waiting until the app services are up and running "IRIS IS READY"
   while [[ $(docker compose logs app | grep -c "IRIS IS READY") -eq 0 ]]; do

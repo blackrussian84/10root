@@ -1,5 +1,5 @@
 #!/bin/bash
-#Reference https://github.com/Velocidex/velociraptor and https://github.com/weslambert/velocistack
+# Reference: https://github.com/Velocidex/velociraptor and https://github.com/weslambert/velocistack
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -9,26 +9,25 @@ define_env
 define_paths
 source "./libs/install-helper.sh"
 
+# Define necessary variables
+src_dir="/path/to/source"
+service_name="velociraptor"
+workdir="/path/to/workdir"
+VELOX_USER=$(get_env_value 'VELOX_USER')
+
 # Step 1: Pre-installation
 pre_install "velociraptor" false
 
-# Step 2: prepare an environment settings
+# Step 2: Prepare environment settings
 rsync -a "${src_dir}/docker-compose.yaml" .
 rsync -a "${src_dir}/entrypoint" .
 rsync -a "${src_dir}/Dockerfile" .
 rsync -a "${src_dir}/.env" .
 
-# Grab variables from the default.env file and add them to the .env file to use int he docker-compose
-replace_env "VELOX_PASSWORD"
-replace_env "VELOX_ROLE"
-replace_env "VELOX_USER"
-
-replace_env "VELOX_FRONTEND_HOSTNAME"
-replace_env "VELOX_SERVER_URL"
-
-replace_env "VELOX_PASSWORD_2"
-replace_env "VELOX_ROLE_2"
-replace_env "VELOX_USER_2"
+# Grab variables from the default.env file and add them to the .env file to use in the docker-compose
+for var in VELOX_PASSWORD VELOX_ROLE VELOX_USER VELOX_FRONTEND_HOSTNAME VELOX_SERVER_URL VELOX_PASSWORD_2 VELOX_ROLE_2 VELOX_USER_2; do
+  replace_env "$var"
+done
 
 docker compose up -d --build
 print_yellow "Waiting for the $service_name service to start..."
@@ -37,20 +36,17 @@ docker compose stop
 
 # Step 3: Update permissions and add custom resources
 sudo chmod 755 -R "${workdir}/${service_name}/velociraptor"
-
 sudo rsync -a "${src_dir}/custom" .
-print_yellow "Add custom resources and restarting the $service_name service..."
+print_yellow "Adding custom resources and restarting the $service_name service..."
 
 # Step 3.1: Add custom artifacts
 cd "${workdir}/${service_name}"
 if [[ -v VELOCIRAPTOR_ARTIFACTS_URL ]]; then
   download_external_file "$VELOCIRAPTOR_ARTIFACTS_URL" velociraptor_artifacts.zip
   unzip -q -o velociraptor_artifacts.zip -d server_artifacts
-  # Sync the dir in the server_artifacts/<DIR>/* to the velociraptor/server_artifacts
   sudo chown -R root:root server_artifacts/*
   sudo rsync -r server_artifacts/* "$VELOCIRAPTOR_ARTIFACTS_DST_FOLDER"
-  sudo rm -rf server_artifacts
-  sudo rm -rf velociraptor_artifacts.zip
+  sudo rm -rf server_artifacts velociraptor_artifacts.zip
 fi
 
 if [ -d custom ]; then
@@ -81,8 +77,10 @@ if [[ -z $VELOX_USER ]]; then
   sed -i "/$msg1/,/$msg2/d" "${workdir}/.env"
   print_green "$service_name credentials added to the .env file"
 
-  echo "$msg1" >>"${workdir}/.env"
-  echo "VELOCIRAPTOR_USERNAME=$_VELOX_USER" >>"${workdir}/.env"
-  echo "VELOCIRAPTOR_PASSWORD=$_VELOX_PASSWORD" >>"${workdir}/.env"
-  echo "$msg2" >>"${workdir}/.env"
+  {
+    echo "$msg1"
+    echo "VELOCIRAPTOR_USERNAME=$_VELOX_USER"
+    echo "VELOCIRAPTOR_PASSWORD=$_VELOX_PASSWORD"
+    echo "$msg2"
+  } >>"${workdir}/.env"
 fi

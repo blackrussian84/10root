@@ -4,7 +4,7 @@
 # TODO: Why do we need to build ELK from the source code instead of using the official Docker image?
 ###
 # Exit immediately if a command exits with a non-zero status
-set -eu
+set -euo pipefail
 
 source "./libs/main.sh"
 source "./libs/install-helper.sh"
@@ -23,7 +23,10 @@ function clone_repository() {
     print_yellow "./cleanup.sh --app elk"
     exit 1
   fi
-  git clone --branch main --single-branch --depth 1 https://github.com/deviantony/docker-elk.git "${workdir}/elk"
+  if ! git clone --branch main --single-branch --depth 1 https://github.com/deviantony/docker-elk.git "${workdir}/elk"; then
+    print_red "Failed to clone the repository."
+    exit 1
+  fi
   cd "${workdir}/elk"
   git fetch --depth 1 origin "$ELK_GIT_COMMIT"
   git checkout "$ELK_GIT_COMMIT"
@@ -39,25 +42,51 @@ function setup_env_variables() {
 
 function start_services() {
   printf "Starting up the setup service...\n"
-  docker compose up setup
+  if ! docker compose up setup; then
+    print_red "Failed to start the setup service."
+    exit 1
+  fi
 
   printf "Starting the service...\n"
-  docker compose up -d
+  if ! docker compose up -d; then
+    print_red "Failed to start the service."
+    exit 1
+  fi
 }
 
 function import_dashboards() {
   printf "Waiting for Kibana to be ready...\n"
-  sleep 10
+  local timeout=300
+  local interval=5
+  local elapsed=0
+
   while ! docker compose exec kibana curl -s -u "${KIBANA_SYSTEM_USER}:${KIBANA_SYSTEM_PASSWORD}" http://localhost:5601/api/status | grep -q '"overall":{"level":"available","summary":"All services and plugins are available"}'; do
-    printf "Sleeping 5; Still waiting for Kibana to be ready...\n"
-    sleep 5
+    if [ "$elapsed" -ge "$timeout" ]; then
+      print_red "Kibana did not become ready in time."
+      exit 1
+    fi
+    printf "Sleeping %d; Still waiting for Kibana to be ready...\n" "$interval"
+    sleep "$interval"
+    elapsed=$((elapsed + interval))
   done
 
   docker compose exec kibana /bin/bash -c \
   "for file in /usr/share/kibana/dashboards/*.ndjson; do echo \"Importing \$file\"; curl -s -X POST -H 'kbn-xsrf: true' -u ${KIBANA_SYSTEM_USER}:${KIBANA_SYSTEM_PASSWORD} -H \"securitytenant: global\" http://localhost:5601/api/saved_objects/_import?overwrite=true --form file=@\"\$file\"; done"
 }
 
+function cleanup() {
+  printf "Cleaning up...\n"
+  # Add any cleanup commands here
+}
+
+trap cleanup EXIT
+
 function main() {
+  if [ -z "${KIBANA_SYSTEM_USER:-}" ] || [ -z "${KIBANA_SYSTEM_PASSWORD:-}" ]; then
+    print_red "KIBANA_SYSTEM_USER and KIBANA_SYSTEM_PASSWORD must be set."
+    exit 1
+  fi
+
   clone_repository
   pre_install "elk"
   setup_env_variables

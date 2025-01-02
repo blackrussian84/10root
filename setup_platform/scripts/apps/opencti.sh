@@ -15,7 +15,8 @@ source "./libs/install-helper.sh"
 pre_install "opencti"
 
 # Step 2: Start the service
+service_name="opencti"
 printf "Starting the service...\n"
-sudo docker compose up -d --force-recreate
+sudo docker-compose up -d --force-recreate
 
 print_green_v2 "$service_name deployment started." "Successfully"

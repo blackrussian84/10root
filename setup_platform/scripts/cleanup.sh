@@ -10,7 +10,7 @@ function show_help() {
   print_with_border "Help for cleanup.sh"
   printf "Usage: %s [OPTIONS]\n" "$0"
   printf "Options:\n"
-  printf "  --force Cleanup all docker services and networks on the host\n"
+  printf "  --force\t\tCleanup all docker services and networks on the host\n"
   printf "  --app <app_name>\tCleanup specific app\n"
   printf "  --help\t\tShow help\n"
   printf "######################\n"
@@ -25,7 +25,6 @@ app_down() {
     printf "Stopping the %s app...\n" "$app_name"
     cd "$(dirname "$file")" || exit
     docker compose down --volumes --remove-orphans --timeout 1
-    docker-compose rm -f
     cd - || exit
   done < <(find "${workdir}/${app_name}" -maxdepth 2 -name docker-compose.yaml -print0 -o -name docker-compose.yml -print0 -o -name compose.yaml -print0)
 }
@@ -66,7 +65,7 @@ default_cleanup() {
   delete_app_dirs ".env"
   app_down "nginx"
   delete_app_dirs "nginx"
-  docker network prune --force
+    docker network rm "$NETWORK_NAME" || true
 
   # If defined NETWORK_NAME , then remove DEFAULT network
   if [ -n "$NETWORK_NAME" ]; then
@@ -91,6 +90,11 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --app)
     app_name=$2
+    if [ -z "$app_name" ]; then
+      printf "App name is not provided\n"
+      show_help
+      exit 1
+    fi
     app_down "$app_name"
     delete_app_dirs "$app_name"
     shift 2
@@ -102,7 +106,7 @@ while [[ "$#" -gt 0 ]]; do
   *)
     printf "Unknown argument: %s\n" "$1"
     show_help
-    exit 0
+    exit 1
     ;;
   esac
 done

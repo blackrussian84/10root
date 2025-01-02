@@ -4,14 +4,23 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+if [ ! -f "./libs/main.sh" ]; then
+  echo "Error: main.sh not found!"
+  exit 1
+fi
 source "./libs/main.sh"
 define_env
 define_paths
-source "./libs/install-helper.sh"
+
+if [ ! -f "./libs/install-helper.sh" ]; then
+  echo "Error: install-helper.sh not found!"
+  exit 1
+fi
+docker-compose up -d --force-recreate
 
 # Step 1: Pre-installation
 pre_install "prowler"
-replace_env "PROWLER_IMAGE_TAG"
+docker run --rm -it -e "TERM=xterm-256color" -v "${workdir}/${service_name}":/tmp ghcr.io/charmbracelet/glow:v2.0 glow /tmp/README.md
 replace_env "PROWLER_COMMAND"
 
 # Step 2: Start the service
