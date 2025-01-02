@@ -2,12 +2,12 @@
 set -euo pipefail
 
 # shellcheck source=/dev/null
-source libs/main.sh || { echo "Failed to source libs/main.sh"; exit 1; }
-rsync -a ../resources/default.env ../workdir/.env || { echo "Failed to sync default.env"; exit 1; }
-define_env ../workdir/.env || { echo "Failed to define environment"; exit 1; }
+source "$(dirname "$(readlink -f "$0")")/libs/main.sh" || { echo "Failed to source libs/main.sh"; exit 1; }
+rsync -a "$(dirname "$(readlink -f "$0")")/../resources/default.env" "$(dirname "$(readlink -f "$0")")/../workdir/.env" || { echo "Failed to sync default.env"; exit 1; }
+define_env "$(dirname "$(readlink -f "$0")")/../workdir/.env" || { echo "Failed to define environment"; exit 1; }
 define_paths || { echo "Failed to define paths"; exit 1; }
 # shellcheck source=/dev/null
-source libs/prerequisites-check.sh || { echo "Failed to source libs/prerequisites-check.sh"; exit 1; }
+source "$(dirname "$(readlink -f "$0")")/libs/prerequisites-check.sh" || { echo "Failed to source libs/prerequisites-check.sh"; exit 1; }
 
 # Define necessary variables
 scripts_dir="$(dirname "$(readlink -f "$0")")"
@@ -23,8 +23,13 @@ fi
 deploy_service() {
   local service_name="$1"
   print_with_border "Deploying $service_name" || { echo "Failed to print border for $service_name"; exit 1; }
-  if ! (cd "${scripts_dir}/apps/${service_name}" && bash "${service_name}.sh" "$home_path"); then
-    echo "Failed to deploy $service_name. Exiting."
+  if [ -d "${scripts_dir}/apps/${service_name}" ]; then
+    if ! (cd "${scripts_dir}/apps/${service_name}" && bash "${service_name}.sh" "$home_path"); then
+      echo "Failed to deploy $service_name. Exiting."
+      exit 1
+    fi
+  else
+    echo "Directory ${scripts_dir}/apps/${service_name} does not exist. Exiting."
     exit 1
   fi
 }
