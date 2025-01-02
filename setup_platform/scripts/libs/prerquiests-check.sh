@@ -23,7 +23,7 @@ check_required_packages() {
   for package in "${packages[@]}"; do
     check_package_installed "$package"
   done
-  print_green "All required packages are installed."
+  echo -e "\e[32mAll required packages are installed.\e[0m"
 }
 
 # Check if the required packages are installed

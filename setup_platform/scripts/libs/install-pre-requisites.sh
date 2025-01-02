@@ -20,7 +20,7 @@ function cleanup_docker() {
   local NETWORK_NAME=${NETWORK_NAME:-"main_network"}
   # Cleanup Docker
   echo "Cleaning up Docker and deps..."
-  docker rm "$NETWORK_NAME" || true
+  docker network rm "$NETWORK_NAME" || true
   sudo apt-get remove --purge -y \
     docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc \
     docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin || true

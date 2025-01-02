@@ -39,6 +39,7 @@ print_with_border() {
   local border="===================== "
   # Calculate the length of the border
   local border_length=$(((80 - length - ${#border}) / 2))
+  local extra_char=$(( (80 - length - ${#border}) % 2 ))
   # Print the top border
   printf "%s" "$border"
   for ((i = 0; i < border_length; i++)); do
@@ -47,7 +48,11 @@ print_with_border() {
   printf " %s " "$input_string"
   for ((i = 0; i < border_length; i++)); do
     printf "="
-  done
+  printf "%s" "$border"
+  if [ $extra_char -ne 0 ]; then
+    printf "="
+  fi
+  printf "\n"
   printf "%s\n" "$border"
 }
 
@@ -59,7 +64,7 @@ define_env() {
   if [ -f "$env_file" ]; then
     source "$env_file"
     printf "%s is loaded\n" "$env_file"
-  else
+# Function to define paths
     print_red "Can't find the .env:\"$env_file\" file. Continue without an .env file."
   fi
 }

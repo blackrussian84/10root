@@ -2,6 +2,26 @@
 set -eo pipefail
 # --- Reused functions in the app install scripts
 
+# Define print_red function
+function print_red() {
+  printf "\e[31m%s\e[0m\n" "$1"
+}
+
+# Define print_yellow function
+function print_yellow() {
+  printf "\e[33m%s\e[0m\n" "$1"
+}
+
+# Define print_green_v2 function
+function print_green_v2() {
+  printf "\e[32m%s: %s\e[0m\n" "$1" "$2"
+}
+
+# Ensure workdir, service_name, and resources_dir are defined
+workdir="/path/to/workdir"
+resources_dir="/path/to/resources"
+service_name="default_service"
+
 # TODO:Deprecated, because of define this variable in the define_paths function
 # --- Function to Check if the first argument is provided
 # Inputs:
@@ -33,7 +53,7 @@ function replace_env() {
   local key=$1
   local env_file=${2:-"${workdir}/${service_name}/.env"}
 
-  if [[ -v $key ]]; then
+  if [[ -v $key && -n "${!key}" ]]; then
     # Replace if the key exists, otherwise add it
     if grep -q "^${key}=" "$env_file"; then
       sed -i "s|${key}=.*|${key}=${!key}|" "$env_file"
