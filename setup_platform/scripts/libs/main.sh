@@ -48,12 +48,12 @@ print_with_border() {
   printf " %s " "$input_string"
   for ((i = 0; i < border_length; i++)); do
     printf "="
+  done
   printf "%s" "$border"
   if [ $extra_char -ne 0 ]; then
     printf "="
   fi
   printf "\n"
-  printf "%s\n" "$border"
 }
 
 ### Business functions ###
@@ -64,24 +64,19 @@ define_env() {
   if [ -f "$env_file" ]; then
     source "$env_file"
     printf "%s is loaded\n" "$env_file"
-# Function to define paths
+  else
     print_red "Can't find the .env:\"$env_file\" file. Continue without an .env file."
   fi
 }
 
-# Function to define path's
+# Function to define paths
 define_paths() {
-  # username should be defined in the .env file
-  # If the username is not defined, then ask user to enter the username
-  if [ -z "$username" ]; then
-    current_user=$(whoami)
-    read -p "Enter username for home directory setup (default: $current_user): " username
-    username=${username:-$current_user}
+  if [ "$(whoami)" == "root" ]; then
+    home_path="/root/setup_platform"
+  else
+    home_path="/home/$(whoami)/setup_platform"
   fi
-
-  home_path="/home/$username/setup_platform"
   resources_dir="$home_path/resources"
   scripts_dir="$home_path/scripts"
   workdir="$home_path/workdir"
 }
-

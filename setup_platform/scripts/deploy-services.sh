@@ -47,7 +47,7 @@ MYIP=${MYIP:-$(curl -s ifconfig.me)}
 PROTO=${PROTO:-https}
 
 # Define service endpoints
-declare -a ENDPOINTS=(
+ENDPOINTS=(
   "cyberchef    : $PROTO://$MYIP/cyberchef/"
   "elk          : $PROTO://$MYIP/kibana/"
   "iris-web     : $PROTO://$MYIP:8443/"
@@ -61,13 +61,8 @@ declare -a ENDPOINTS=(
   "opencti      : $PROTO://$MYIP/opencti/"
 )
 
-# Print success message and endpoints
-print_green "All the docker services are deployed successfully."
-print_with_border "Access the services using below links"
-for service in "${APPS_TO_INSTALL[@]}"; do
-  for endpoint in "${ENDPOINTS[@]}"; do
-    if [[ $endpoint == "$service"* ]]; then
-      echo "$endpoint"
-    fi
-  done
+echo "All the docker services are deployed successfully."
+echo "Access the services using the below links:"
+for endpoint in "${ENDPOINTS[@]}"; do
+  echo "$endpoint"
 done

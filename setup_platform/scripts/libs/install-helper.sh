@@ -1,29 +1,45 @@
 #!/usr/bin/env bash
 set -eo pipefail
-# --- Reused functions in the app install scripts
 
-# Define print_red function
-function print_red() {
-  printf "\e[31m%s\e[0m\n" "$1"
+# Define color codes
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+# Function to print green message
+print_green() {
+  local message=$1
+  printf "${GREEN}%s${NC}\n" "$message"
 }
 
-# Define print_yellow function
-function print_yellow() {
-  printf "\e[33m%s\e[0m\n" "$1"
+print_green_v2() {
+  local message=$1
+  local action=$2
+  printf "${GREEN}✔${NC} %s ${GREEN}%s${NC}\n" "$message" "$action"
 }
 
-# Define print_green_v2 function
-function print_green_v2() {
-  printf "\e[32m%s: %s\e[0m\n" "$1" "$2"
+# Function to print red message
+print_red() {
+  local message=$1
+  printf "${RED}%s${NC}\n" "$message"
+}
+
+# Function to print yellow message
+print_yellow() {
+  local message=$1
+  printf "${YELLOW}%s${NC}\n" "$message"
 }
 
 # Ensure workdir, service_name, and resources_dir are defined
-workdir="/path/to/workdir"
-resources_dir="/path/to/resources"
-service_name="default_service"
+function define_paths() {
+  home_path=${1:-"/home/$(whoami)/setup_platform"}
+  workdir="${home_path}/workdir"
+  resources_dir="${home_path}/resources"
+  service_name="default_service"
+}
 
-# TODO:Deprecated, because of define this variable in the define_paths function
-# --- Function to Check if the first argument is provided
+# Function to Check if the first argument is provided
 # Inputs:
 # $1 - home_path
 function check_home_path() {
@@ -34,7 +50,7 @@ function check_home_path() {
   fi
 }
 
-# --- Function to get env value from .env file
+# Function to get env value from .env file
 # Inputs:
 # $1 - key to get the value
 # $2[optional] - env file path
@@ -45,7 +61,7 @@ function get_env_value() {
   printf "%s\n" "$value"
 }
 
-# --- Replace the default values in the local .env file which uses by docker compose file
+# Replace the default values in the local .env file which uses by docker compose file
 # Inputs:
 # $1 - env file path to replace the values
 # $2 - key to replace
@@ -53,7 +69,7 @@ function replace_env() {
   local key=$1
   local env_file=${2:-"${workdir}/${service_name}/.env"}
 
-  if [[ -v $key && -n "${!key}" ]]; then
+  if [[ -v $key ]]; then
     # Replace if the key exists, otherwise add it
     if grep -q "^${key}=" "$env_file"; then
       sed -i "s|${key}=.*|${key}=${!key}|" "$env_file"
@@ -65,7 +81,7 @@ function replace_env() {
   fi
 }
 
-# --- Download external file
+# Download external file
 # Inputs:
 # $1 - url to download
 # $2 - file name to save
@@ -80,7 +96,7 @@ function download_external_file() {
   fi
 }
 
-# --- PRE install steps for each app
+# PRE install steps for each app
 # Inputs:
 # $1 - service name
 # $2 [option] - copy files from the source directory
@@ -93,7 +109,7 @@ function pre_install() {
     exit 1
   fi
 
-  src_dir="$resources_dir/$service_name"
+  src_dir="${resources_dir}/${service_name}"
   curr_dir=$(pwd)
 
   mkdir -p "${workdir}/${service_name}"
@@ -106,4 +122,6 @@ function pre_install() {
   else
     printf "Skipping copying app related files.\n"
   fi
+
+  cd "$curr_dir"
 }
