@@ -20,16 +20,26 @@ if [ -z "${APPS_TO_INSTALL+x}" ] || [ "${#APPS_TO_INSTALL[@]}" -eq 0 ]; then
 fi
 
 # Function to deploy the services
+  # Deploys a specified service by running its associated script.
+  #
+  # Arguments:
+  #   service_name: The name of the service to be deployed.
+  #
+  # The function first prints a deployment message with a border.
+  # It then checks if the service's deployment script exists in the expected directory.
+  # If the script exists, it attempts to execute it; otherwise, it exits with an error.
+  # If the script execution fails, the function also exits with an error.
+
 deploy_service() {
   local service_name="$1"
   print_with_border "Deploying $service_name" || { echo "Failed to print border for $service_name"; exit 1; }
-  if [ -d "${scripts_dir}/apps/${service_name}" ]; then
-    if ! (cd "${scripts_dir}/apps/${service_name}" && bash "${service_name}.sh" "$home_path"); then
+  if [ -f "${scripts_dir}/apps/${service_name}.sh" ]; then
+    if ! (cd "${scripts_dir}/apps" && bash "${service_name}.sh" "$home_path"); then
       echo "Failed to deploy $service_name. Exiting."
       exit 1
     fi
   else
-    echo "Directory ${scripts_dir}/apps/${service_name} does not exist. Exiting."
+    echo "Script ${scripts_dir}/apps/${service_name}.sh does not exist. Exiting."
     exit 1
   fi
 }

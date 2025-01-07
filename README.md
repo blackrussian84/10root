@@ -16,15 +16,15 @@ This stack is growing, you find a complete list of the services in the file `res
 1. **[CyberChef](https://github.com/gchq/CyberChef)**. Description: CyberChef is a simple, intuitive web app for carrying out all manners of "cyber" operations within a web browser.
 2. **[ELK](https://github.com/deviantony/docker-elk)**. Description: Elasticsearch, Kibana & Logstash. The ELK stack is a log management platform for collecting, searching, and analyzing logs.
 3. **[Iris](https://github.com/dfir-iris/iris-web/tree/master)**. Description: Iris is a web collaborative platform aiming to help incident responders sharing technical details during investigations.
-4.  **[Nightingale](https://github.com/nightingaleproject/nightingale)**. Description: An Open Source Next Generation Electronic Death Registration System.
+4. **[Nightingale](https://github.com/nightingaleproject/nightingale)**. Description: An Open Source Next Generation Electronic Death Registration System.
 5. **[Portainer](https://github.com/portainer/portainer)**. Description: Portainer is a lightweight management UI that allows you to easily manage your different Docker environments (Docker hosts or Swarm clusters).
-6. **[Strelka](https://github.com/target/strelka/)** Description: Strelka is a real-time file scanning system used for threat hunting, threat detection, and incident response.
+6. **[Strelka](https://github.com/target/strelka/)**. Description: Strelka is a real-time file scanning system used for threat hunting, threat detection, and incident response.
 7. **[Timesketch](https://github.com/google/timesketch)**. Description: Timesketch is an open-source tool for collaborative forensic timeline analysis.
 8. **[Velociraptor](https://github.com/Velocidex/velociraptor)**. Description: Velociraptor is a tool for collecting host-based state information using The Velociraptor Query Language (VQL) queries.
 9. **[Nginx](https://github.com/nginx/nginx)**. Description: Nginx is a web server that proxy all requests to the services in this stack.
 10. **[Prowler](https://github.com/prowler-cloud/prowler)**. Description: Prowler is an Open Source Security tool for AWS, Azure, GCP and Kubernetes to do security assessments, audits, incident response, compliance, continuous monitoring, hardening and forensics readiness. Includes CIS, NIST 800, NIST CSF, CISA, FedRAMP, PCI-DSS, GDPR, HIPAA, FFIEC, SOC2, GXP, Well-Architected Security, ENS and more.
-11. **[OpenCTI](https://github.com/OpenCTI-Platform/opencti)**.  Description: OpenCTI is an open source platform allowing organizations to manage their cyber threat intelligence knowledge and observables. It has been created in order to structure, store, organize and visualize technical and non-technical information about cyber threats.
-12. **[Misp](https://github.com/MISP/misp-docker)**. Description: MISP is an open source software solution for collecting, storing, distributing and sharing cyber security indicators and threats about cyber security incidents analysis and malware analysis. 
+11. **[OpenCTI](https://github.com/OpenCTI-Platform/opencti)**. Description: OpenCTI is an open source platform allowing organizations to manage their cyber threat intelligence knowledge and observables. It has been created in order to structure, store, organize and visualize technical and non-technical information about cyber threats.
+12. **[Misp](https://github.com/MISP/misp-docker)**. Description: MISP is an open source software solution for collecting, storing, distributing and sharing cyber security indicators and threats about cyber security incidents analysis and malware analysis.
 
 </details>
 
